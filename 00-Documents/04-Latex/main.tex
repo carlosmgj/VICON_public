@@ -1,0 +1,177 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% REFERENCIAR IMAGENES: \autoref
+
+\RequirePackage{silence}
+\WarningFilter{soulutf8}{This package is obsolete}
+\WarningFilter{scrreprt}{Usage of package `titlesec' together}
+\WarningFilter{titlesec}{Non standard sectioning command}
+\WarningFilter{scrreprt}{Usage of package `tocloft' together}
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%---------------------------------------------------------------------------------------- 
+\documentclass[%1twoside, 
+DIV = 10,
+openright,titlepage,numbers=noenddot,headinclude,
+headlines,footinclude=true,cleardoublepage=empty,paper=a4,fontsize=12pt, % Binding correction, paper type and font 
+spanish, % Languages
+]{scrreprt} 
+
+% Includes the file which contains all the document configurations and packages - make sure to edit this file
+\input{classicthesis-config}
+\titleformat{\chapter}[display]
+  {\normalfont\large\scshape}
+  {\raggedleft\color{halfgray}\fontsize{60}{60}\selectfont\thechapter} % Número/Letra alineado dentro del margen
+  {-10pt} % Espacio entre la 'A' y el título
+  {\raggedright\spacedallcaps}[\vspace*{0.8ex}\titlerule] % Título en versalitas y la línea debajo (\titlerule)
+
+% Ajusta el espacio en blanco de arriba y abajo
+% \titlespacing*{<comando>}{<izquierda>}{<arriba>}{<abajo>}
+\titlespacing*{\chapter}{0pt}{5pt}{30pt}
+\begin{document}
+
+	\frenchspacing % Reduces space after periods to make text more compact
+	\raggedbottom % Makes all pages the height of the text on that page
+	\selectlanguage{spanish} % Select your default language - e.g. american or ngerman
+	
+	%\renewcommand*{\bibname}{new name} % Uncomment to change the name of the bibliography
+	%\setbibpreamble{} % Uncomment to include a preamble to the bibliography - some text before the reference list starts
+	
+	\pagenumbering{roman} % Roman page numbering prior to the start of the thesis content (i, ii, iii, etc)
+	\pagestyle{plain} % Suppress headers for the pre-content pages
+	\include{FrontBackMatter/Titlepage} % Main title page
+	%\includepdf[pages=-]{gfx/thesis-front-cover.pdf}
+	\include{FrontBackMatter/Titleback} % Back of the title page
+	%1\cleardoublepage\include{FrontBackMatter/Dedication} % Dedication page
+	%1\cleardoublepage\include{FrontBackMatter/Foreword} % Uncomment and create a Foreword.tex to include a foreword
+	\newpage
+	\thispagestyle{plain}
+	\mbox{}
+	\newpage
+	\cleardoublepage\include{FrontBackMatter/Abstract} % Abstract page
+	%1\cleardoublepage\include{FrontBackMatter/Publication} % Publications from the thesis page
+	\newpage
+	\thispagestyle{plain}
+	\mbox{}
+	\newpage
+	\cleardoublepage\include{FrontBackMatter/Acknowledgments} % Acknowledgements page
+	\newpage
+	\thispagestyle{plain}
+	\mbox{}
+	\newpage
+	\pagestyle{scrheadings} % Show chapter titles as headings
+	\cleardoublepage\include{FrontBackMatter/Contents} % Contents, list of figures/tables/listings and acronyms
+	\newpage
+	\thispagestyle{plain}
+	\mbox{}
+	\newpage
+	\cleardoublepage 
+	\pagenumbering{arabic} % Arabic page numbering for thesis content (1, 2, 3, etc)
+	%\setcounter{page}{90} % Uncomment to manually start the page counter at an arbitrary value (for example if you wish to count the pre-content pages in the page count)
+
+	\cleardoublepage % Avoids problems with pdfbookmark
+	
+	%----------------------------------------------------------------------------------------
+	%	THESIS CONTENT - CHAPTERS
+	%----------------------------------------------------------------------------------------
+	
+	%1\ctparttext{You can put some informational part preamble text here. Illo principalmente su nos. Non message \emph{occidental} angloromanic da. Debitas effortio simplificate sia se, auxiliar summarios da que, se avantiate publicationes via. Pan in terra summarios, capital interlingua se que. Al via multo esser specimen, campo responder que da. Le usate medical addresses pro, europa origine sanctificate nos se.} % Text on the Part 1 page describing  the content in Part 1
+	
+	%1\part{Some Kind of Manual} % First part of the thesis
+
+
+	\subfile{Chapters/cap_introduccion.tex}
+
+	\newpage
+	\thispagestyle{plain}
+	\mbox{}
+	\newpage
+	\subfile{Chapters/cap_estado_arte.tex}
+
+	\newpage
+	\thispagestyle{plain}
+	\mbox{}
+	\newpage
+	\subfile{Chapters/cap_herramientas.tex}
+
+	\newpage
+	\thispagestyle{plain}
+	\mbox{}
+	\newpage
+	\subfile{Chapters/cap_requisitos.tex}
+
+	\newpage
+	\thispagestyle{plain}
+	\mbox{}
+	\newpage
+	\subfile{Chapters/cap_descripcion_sistema.tex}
+
+	\newpage
+	\thispagestyle{plain}
+	\mbox{}
+	\newpage
+	\subfile{Chapters/cap_desarrollo.tex}
+
+	\newpage
+	\thispagestyle{plain}
+	\mbox{}
+	\newpage
+	\subfile{Chapters/cap_software.tex}
+
+	\newpage
+	\thispagestyle{plain}
+	\mbox{}
+	\newpage
+	\subfile{Chapters/cap_implementacion.tex}
+
+	\newpage
+	\thispagestyle{plain}
+	\mbox{}
+	\newpage
+	\subfile{Chapters/cap_resultados.tex}
+
+	\newpage
+	\thispagestyle{plain}
+	\mbox{}
+	\newpage
+	\subfile{Chapters/cap_conclusiones.tex}
+
+	
+	
+	%----------------------------------------------------------------------------------------
+	%	THESIS CONTENT - APPENDICES
+	%----------------------------------------------------------------------------------------
+	\cleardoublepage
+    \include{FrontBackMatter/Bibliography} % Bibliography
+	%\appendix
+	%\pagenumbering{gobble}
+	%1\part{Appendix} % New part of the thesis for the appendix
+    %\include{Chapters/Chapter0A} % Appendix A
+	%\include{Chapters/Chapter0B} % Appendix B - empty
+	%\include{Chapters/Chapter0C} %template
+	%\include{Chapters/Chapter0D} %template
+	\cleardoublepage
+	\appendix
+	\ctparttext{En esta parte se incluyen los manuales de usuario y documentación adicional.}
+	\part{Apendices}
+
+	\include{Chapters/Chapter0A}
+	\include{Chapters/Chapter0B}
+	%----------------------------------------------------------------------------------------
+	%	POST-CONTENT THESIS PAGES
+	%----------------------------------------------------------------------------------------
+	
+    
+	%1\cleardoublepage\include{FrontBackMatter/Colophon} % Colophon
+	
+	%1\cleardoublepage\include{FrontBackMatter/Declaration} % Declaration
+	
+	%1\cleartoleftpage\include{FrontBackMatter/Backpage} % Back cover
+	%----------------------------------------------------------------------------------------
+	
+
+\end{document}

@@ -1,0 +1,123 @@
+% Table of Contents - List of Tables/Figures/Listings and Acronyms 
+
+\refstepcounter{dummy}
+
+\pdfbookmark[1]{\contentsname}{tableofcontents} % Bookmark name visible in a PDF viewer
+
+\setcounter{tocdepth}{2} % Depth of sections to include in the table of contents - currently up to sections
+
+\setcounter{secnumdepth}{3} % Depth of sections to number in the text itself - currently up to subsubsections
+
+\manualmark
+\markboth{\spacedlowsmallcaps{\contentsname}}{\spacedlowsmallcaps{\contentsname}}
+\tableofcontents 
+\automark[section]{chapter}
+\renewcommand{\chaptermark}[1]{\markboth{\spacedlowsmallcaps{#1}}{\spacedlowsmallcaps{#1}}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\enspace\spacedlowsmallcaps{#1}}}
+
+\clearpage
+
+\begingroup 
+\let\clearpage\relax
+\let\cleardoublepage\relax
+\let\cleardoublepage\relax
+
+%----------------------------------------------------------------------------------------
+%	List of Figures
+%----------------------------------------------------------------------------------------
+
+%\refstepcounter{dummy}
+%\addcontentsline{toc}{chapter}{\listfigurename} % Uncomment if you would like the list of figures to appear in the table of contents
+%\pdfbookmark[1]{\listfigurename}{lof} % Bookmark name visible in a PDF viewer
+
+%\listoffigures
+
+%\vspace*{8ex}
+%\newpage
+
+%----------------------------------------------------------------------------------------
+%	List of Tables
+%----------------------------------------------------------------------------------------
+
+%\refstepcounter{dummy}
+%\addcontentsline{toc}{chapter}{\listtablename} % Uncomment if you would like the list of tables to appear in the table of contents
+%\pdfbookmark[1]{\listtablename}{lot} % Bookmark name visible in a PDF viewer
+
+%\listoftables
+        
+        %\vspace*{8ex}
+        %\newpage
+            
+            %----------------------------------------------------------------------------------------
+            %	List of Listings
+            %---------------------------------------------------------------------------------------- 
+
+            %\refstepcounter{dummy}
+            %\addcontentsline{toc}{chapter}{\lstlistlistingname} % Uncomment if you would like the list of listings to appear in the table of contents
+            %\pdfbookmark[1]{\lstlistlistingname}{lol} % Bookmark name visible in a PDF viewer
+
+            %\lstlistoflistings 
+            %\todo{Quitar esto no?}
+            %\vspace*{8ex}
+            %\newpage
+             
+            \pdfbookmark[1]{Lista de TODOS}{todolist}
+	        \listoftodos  
+            \newpage
+
+            \pdfbookmark[1]{Lista de Figuras}{figurelist}
+	        \listoffigures 
+            \newpage
+
+            \pdfbookmark[1]{Lista de Tablas}{tablelist}
+	        \listoftables 
+            \newpage
+             %----------------------------------------------------------------------------------------
+             %	Acronyms
+             %----------------------------------------------------------------------------------------
+
+             \refstepcounter{dummy}
+             %\addcontentsline{toc}{chapter}{Acronyms} % Uncomment if you would like the acronyms to appear in the table of contents
+             \pdfbookmark[1]{Acrónimos}{Acrónimos} % Bookmark name visible in a PDF viewer
+
+             \markboth{\spacedlowsmallcaps{Acronyms}}{\spacedlowsmallcaps{Acronyms}}
+             \chapter*{Acronimos}
+
+             \begin{acronym}[UML]
+             \acro{PCB}{Printed Circuit Board}
+             \acro{VGA}{Video Graphics Array}
+             \acro{FPGA}{Field-Programmable Gate Array}
+             \acro{VHDL}{VHSIC Hardware Description Language}
+             \acro{CDC}{Clock Domain Crossing}
+             \acro{UVVM}{Universal VHDL Verification Methodology}
+             \acro{TFM}{Trabajo Fin de Máster}
+             \acro{VICON}{Sistema de Visión Configurable}
+             \acro{RTL}{Register Transfer Level}
+             \acro{FIFO}{First In - First Out}
+             \acro{SW}{Software}
+             \acro{HW}{Hardware}
+             \acro{TB}{TestBench}
+             \acro{VVC}{VHDL Verification Component}
+             \acro{UVM}{Universal Verification Methodology}
+             \acro{OSVVM}{Open Source VHDL Verification Methodology}
+             \acro{ILA}{Integrated Logic Analyzer}
+             \acro{IP}{Intellectual Property}
+             \acro{IDE}{Entorno de Desarrollo Integrado}
+             \acro{IFP}{Image Flow Processor}
+             \acro{FPS}{Frames por segundo}
+             \acro{SCL}{Serial Clock}
+             \acro{SDA}{Serial Data}
+             \acro{FSM}{Finite State Machine}
+             \acro{MMCM}{Mixed-Mode Clock Manager}
+             \acro{GUI}{Graphical User Interface}
+             \acro{FWFT}{First Word Fall Through}
+             \acro{I2C}{Inter-Integrated Circuit}
+             \acro{DUT}{Device Under Test}
+             \acro{CCIO}{Clock Capable Input/Output}
+             \acro{LUT}{Look Up Table}
+             \acro{IOB}{Input/Output Block}
+             \acro{PS}{Processing System}
+             \acro{ACK}{Acknowledge}
+             \acro{EEPROM}{Electrically Erasable Programmable Read-Only Memory}
+             \end{acronym}  
+\endgroup   

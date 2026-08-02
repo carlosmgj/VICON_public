@@ -1,0 +1,106 @@
+\babel@toc {spanish}{}\relax 
+\vspace {-\cftbeforepartskip }
+\babel@toc {spanish}{}\relax 
+\contentsline {chapter}{\numberline {1}{Introducción}}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}{Motivación}}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}{Objetivos}}{1}{section.1.2}%
+\contentsline {section}{\numberline {1.3}{Entorno de usuarios}}{2}{section.1.3}%
+\contentsline {section}{\numberline {1.4}{Directivas del proyecto}}{2}{section.1.4}%
+\contentsline {section}{\numberline {1.5}{Alternativas y competencia}}{3}{section.1.5}%
+\contentsline {section}{\numberline {1.6}{Planificación temporal}}{4}{section.1.6}%
+\contentsline {section}{\numberline {1.7}{Estructura de la memoria}}{4}{section.1.7}%
+\contentsline {chapter}{\numberline {2}{Estado del arte}}{7}{chapter.2}%
+\contentsline {section}{\numberline {2.1}{Sistemas de visión artificial embebida}}{7}{section.2.1}%
+\contentsline {section}{\numberline {2.2}{Interfaces de alta velocidad hacia PC}}{7}{section.2.2}%
+\contentsline {section}{\numberline {2.3}{Sensores de imagen CMOS}}{7}{section.2.3}%
+\contentsline {section}{\numberline {2.4}{Metodologías de verificación de hardware digital}}{8}{section.2.4}%
+\contentsline {chapter}{\numberline {3}{Herramientas y entorno de desarrollo}}{10}{chapter.3}%
+\contentsline {section}{\numberline {3.1}{Diseño e implementación en FPGA}}{10}{section.3.1}%
+\contentsline {section}{\numberline {3.2}{Simulación y verificación}}{10}{section.3.2}%
+\contentsline {section}{\numberline {3.3}{Control de versiones}}{11}{section.3.3}%
+\contentsline {section}{\numberline {3.4}{Documentación}}{11}{section.3.4}%
+\contentsline {chapter}{\numberline {4}{Requisitos y casos de uso}}{13}{chapter.4}%
+\contentsline {section}{\numberline {4.1}{Requisitos del sistema}}{13}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}{Descripción de los requisitos funcionales}}{14}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}{Descripción de los requisitos no funcionales}}{15}{subsection.4.1.2}%
+\contentsline {section}{\numberline {4.2}{Casos de uso}}{16}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}{Descripción textual de los casos de uso}}{16}{subsection.4.2.1}%
+\contentsline {subsubsection}{\numberline {4.2.1.1}{C1 --- Capturar un fotograma de la cámara}}{16}{subsubsection.4.2.1.1}%
+\contentsline {subsubsection}{\numberline {4.2.1.2}{C2 --- Transmitir el vídeo al Host}}{17}{subsubsection.4.2.1.2}%
+\contentsline {subsubsection}{\numberline {4.2.1.3}{C3 --- Visualizar el vídeo en el Host}}{18}{subsubsection.4.2.1.3}%
+\contentsline {subsubsection}{\numberline {4.2.1.4}{C4 --- Enviar un comando al sistema}}{19}{subsubsection.4.2.1.4}%
+\contentsline {chapter}{\numberline {5}{Descripción y arquitectura del sistema}}{21}{chapter.5}%
+\contentsline {section}{\numberline {5.1}{Arquitectura global}}{21}{section.5.1}%
+\contentsline {section}{\numberline {5.2}{Arquitectura física}}{22}{section.5.2}%
+\contentsline {section}{\numberline {5.3}{Hardware}}{22}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}{FPGA Basys 3}}{22}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}{Sensor CMOS MT9V111}}{23}{subsection.5.3.2}%
+\contentsline {subsection}{\numberline {5.3.3}{Chip FT232H}}{25}{subsection.5.3.3}%
+\contentsline {section}{\numberline {5.4}{Arquitectura lógica}}{27}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}{Componentes de la FPGA}}{28}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}{Relaciones entre componentes y dominios de reloj}}{29}{subsection.5.4.2}%
+\contentsline {subsection}{\numberline {5.4.3}{Componentes del Host}}{31}{subsection.5.4.3}%
+\contentsline {chapter}{\numberline {6}{Desarrollo}}{33}{chapter.6}%
+\contentsline {section}{\numberline {6.1}{Estructura del proyecto}}{33}{section.6.1}%
+\contentsline {section}{\numberline {6.2}{RTL Design}}{34}{section.6.2}%
+\contentsline {subsection}{\numberline {6.2.1}{TOP}}{34}{subsection.6.2.1}%
+\contentsline {subsection}{\numberline {6.2.2}{I2C Controller}}{35}{subsection.6.2.2}%
+\contentsline {paragraph}{{Protocolo I2C MT9V111}}{35}{subsection.6.2.2}%
+\contentsline {paragraph}{{Máquina de estados}}{36}{figure.caption.47}%
+\contentsline {subsection}{\numberline {6.2.3}{Frame Capture}}{38}{subsection.6.2.3}%
+\contentsline {subsection}{\numberline {6.2.4}{FTDI Controller}}{39}{subsection.6.2.4}%
+\contentsline {paragraph}{{Proceso TX (\texttt {p\_tx}, \texttt {falling\_edge})}}{39}{subsection.6.2.4}%
+\contentsline {paragraph}{{Proceso RX (\texttt {p\_rx}, \texttt {rising\_edge})}}{39}{subsection.6.2.4}%
+\contentsline {subsection}{\numberline {6.2.5}{CMD Processor}}{40}{subsection.6.2.5}%
+\contentsline {subsection}{\numberline {6.2.6}{Imagen sintética (cam\_sim)}}{41}{subsection.6.2.6}%
+\contentsline {section}{\numberline {6.3}{Gestión de cruces de dominio de reloj (CDC)}}{41}{section.6.3}%
+\contentsline {section}{\numberline {6.4}{Verificación por Simulación}}{42}{section.6.4}%
+\contentsline {subsection}{\numberline {6.4.1}{Estructura del banco de pruebas}}{42}{subsection.6.4.1}%
+\contentsline {subsection}{\numberline {6.4.2}{Agente FTDI}}{42}{subsection.6.4.2}%
+\contentsline {subsection}{\numberline {6.4.3}{Monitores}}{43}{subsection.6.4.3}%
+\contentsline {subsection}{\numberline {6.4.4}{Resultados de simulación}}{43}{subsection.6.4.4}%
+\contentsline {chapter}{\numberline {7}{Software de visualización PC}}{47}{chapter.7}%
+\contentsline {section}{\numberline {7.1}{Arquitectura y concurrencia}}{47}{section.7.1}%
+\contentsline {section}{\numberline {7.2}{Interfaz gráfica}}{48}{section.7.2}%
+\contentsline {section}{\numberline {7.3}{Protocolo de recepción de imagen}}{49}{section.7.3}%
+\contentsline {section}{\numberline {7.4}{Protocolo de comandos y control}}{49}{section.7.4}%
+\contentsline {section}{\numberline {7.5}{Detección de rostros}}{50}{section.7.5}%
+\contentsline {section}{\numberline {7.6}{Gestión de errores y limitaciones}}{50}{section.7.6}%
+\contentsline {chapter}{\numberline {8}{Implementación y resultados}}{53}{chapter.8}%
+\contentsline {section}{\numberline {8.1}{Síntesis e implementación en Vivado}}{53}{section.8.1}%
+\contentsline {subsection}{\numberline {8.1.1}{Resultados de timing}}{53}{subsection.8.1.1}%
+\contentsline {subsection}{\numberline {8.1.2}{Utilización de recursos}}{54}{subsection.8.1.2}%
+\contentsline {section}{\numberline {8.2}{Constraints XDC}}{55}{section.8.2}%
+\contentsline {section}{\numberline {8.3}{Depuración en hardware con ILA}}{55}{section.8.3}%
+\contentsline {subsection}{\numberline {8.3.1}{Diagnóstico del protocolo FT232H}}{56}{subsection.8.3.1}%
+\contentsline {section}{\numberline {8.4}{Pruebas en hardware}}{56}{section.8.4}%
+\contentsline {subsection}{\numberline {8.4.1}{Transmisión de imagen}}{56}{subsection.8.4.1}%
+\contentsline {subsection}{\numberline {8.4.2}{Comandos de control}}{56}{subsection.8.4.2}%
+\contentsline {chapter}{\numberline {9}{Verificación y validación}}{58}{chapter.9}%
+\contentsline {section}{\numberline {9.1}{Verificación de requisitos}}{58}{section.9.1}%
+\contentsline {subsection}{\numberline {9.1.1}{Entornos de prueba}}{58}{subsection.9.1.1}%
+\contentsline {subsection}{\numberline {9.1.2}{Descripción de las pruebas}}{59}{subsection.9.1.2}%
+\contentsline {section}{\numberline {9.2}{Plan de validación}}{65}{section.9.2}%
+\contentsline {subsection}{\numberline {9.2.1}{Pruebas del plan de validación}}{66}{subsection.9.2.1}%
+\contentsline {chapter}{\numberline {10}{Conclusiones y trabajo futuro}}{72}{chapter.10}%
+\contentsline {section}{\numberline {10.1}{Conclusiones}}{72}{section.10.1}%
+\contentsline {section}{\numberline {10.2}{Trabajo futuro}}{72}{section.10.2}%
+\vspace {\beforebibskip }
+\contentsline {chapter}{\numberline {}{Bibliograf\'{\i }a}}{74}{dummy.3}%
+\def \@chapapp {\appendixname }
+\contentsline {part}{\numberline {i}{Apendices}}{75}{part.1}%
+\contentsline {chapter}{\numberline {A}{Manual de Usuario}}{76}{chapter.A}%
+\contentsline {section}{\numberline {A.1}{Requisitos del sistema}}{76}{section.A.1}%
+\contentsline {section}{\numberline {A.2}{Instalación y configuración}}{76}{section.A.2}%
+\contentsline {subsection}{\numberline {A.2.1}{Descarga del código fuente}}{76}{subsection.A.2.1}%
+\contentsline {subsection}{\numberline {A.2.2}{Configuración del módulo FT232H}}{77}{subsection.A.2.2}%
+\contentsline {subsection}{\numberline {A.2.3}{Compilación de la aplicación de PC}}{77}{subsection.A.2.3}%
+\contentsline {section}{\numberline {A.3}{Guía de uso de la aplicación}}{77}{section.A.3}%
+\contentsline {subsection}{\numberline {A.3.1}{Inicio de la aplicación}}{77}{subsection.A.3.1}%
+\contentsline {subsection}{\numberline {A.3.2}{Descripción de la interfaz}}{77}{subsection.A.3.2}%
+\contentsline {section}{\numberline {A.4}{Resolución de problemas (\textit {troubleshooting})}}{80}{section.A.4}%
+\contentsline {chapter}{\numberline {B}{Diagramas de estados (FSM)}}{81}{chapter.B}%
+\contentsline {section}{\numberline {B.1}{FSM de configuración del TOP}}{81}{section.B.1}%
+\contentsline {section}{\numberline {B.2}{FSM del \texttt {i2c\_controller}}}{81}{section.B.2}%
+\contentsline {section}{\numberline {B.3}{FSM de recepción del \texttt {ftdi\_controller}}}{81}{section.B.3}%
+\providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 

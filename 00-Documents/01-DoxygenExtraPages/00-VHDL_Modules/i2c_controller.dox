@@ -1,0 +1,161 @@
+--! Controlador I2C para comunicación con el sensor MT9V111.
+--! 
+--! \section sec_mt9v111_protocol Protocolo MT9V111:
+--! 
+--! Protocolo soportado:
+--!   WRITE : S + ADDR_W + ACK + REG_ADDR + ACK + [DATA_H + ACK + DATA_L + ACK] x N + P
+--!   READ  : S + ADDR_W + ACK + REG_ADDR + ACK + Sr + ADDR_R + ACK + [DATA_H + ACK + DATA_L + ACK/NACK] x N + P
+--! 
+--! Los puertos del bus (scl_out, sda_out, sda_oe_o, sda_in) son señales lógicas
+--! separadas. El tristate e open-drain se manejan en el TOP level.
+--! 
+--! Timing SCL – 4 fases de CLKS_PER_PHASE ciclos de sistema cada una:
+--! - _0  SCL=0  →  cambiar / preparar SDA
+--! - _1  SCL=1
+--! - _2  SCL=1  →  muestrear SDA
+--! - _3  SCL=0  →  transición
+--! 
+--! \section sec_waveforms WAVEFORMS
+--! MT9V111 16 bits Reading
+--! \htmlonly
+--! <div style="zoom: 1; text-align:center; overflow-x: auto; max-width: 100%;">
+--! <style>
+--! #16bitsreading svg { width: 200% !important; height: auto !important; }
+--! </style>
+--! <div id="16bitsreading">
+--! <script type="WaveDrom">
+--! { signal: [
+--!   { name: "", wave: "u7...8...............................3...7...............................3...6...8...............................3...5...............................3...5...............................3...9...u", data: "START ADDR+W ACK REG_ADDR ACK RSTART ADDR+R ACK REG_VALUE(MSB) ACK REG_VALUE(LSB) ACK STOP", period: 1},
+--!   {},
+--!   {name: "SCL", wave: "010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101u" , period: 2},
+--!   { name: "SDA",  wave: "u..0.1...0...1...........0...1...0...0...................1...0.......1...0...1.0.1...0...1...........0.......1...0...........................1...0...0...1...0...............1...0.......0...0.1..",},
+--!   {},
+--!   { name: "clk cycle",  wave: "0.7.0.8.0.8.0.8.0.8.0.8.0.8.0.8.0.8.0.3.0.7.0.7.0.7.0.7.0.7.0.7.0.7.0.7.0.3.0.6.0.8.0.8.0.8.0.8.0.8.0.8.0.8.0.8.0.3.0.5.0.5.0.5.0.5.0.5.0.5.0.5.0.5.0.3.0.5.0.5.0.5.0.5.0.5.0.5.0.5.0.5.0.3.0.9.0.", data:"1 1 2 3 4 5 6 7 8 9 1 2 3 4 5 6 7 8 9 1 1 2 3 4 5 6 7 8 9 1 2 3 4 5 6 7 8 9 1 2 3 4 5 6 7 8 9 1 "}
+--! ],
+--!   config: { hscale: 1, skin: 'narrow'},
+--!  head:{
+--!    tick:0,
+--!    every:2
+--!  }
+--! }
+--! </script>
+--! </div>
+--! </div>
+--! \endhtmlonly
+--! 
+--! ADDR
+--! 
+--! \htmlonly
+--! <div style="zoom: 1; text-align:center; overflow-x: auto; max-width: 100%;">
+--! <style>
+--! #16bitsreading_reg svg { width: 100% !important; height: auto !important; }
+--! </style>
+--! <div id="16bitsreading_reg">
+--! <script type="WaveDrom">
+--! { signal: [
+--!   { name: "", wave: "u7...8...............................3...", data: "START ADDR+W/R ACK REG_VALUE ACK REG(MSB) ACK REG(LSB) ACK STOP", period: 1},
+--!   {name: "SCL", wave: "010101010101010101010" , period: 2},
+--!   { name: "SDA",  wave: "u..0.1...0...1...........0...1...0...0....",},
+--!   { name: "clk cycle",  wave: "0.7.0.8.0.8.0.8.0.8.0.8.0.8.0.8.0.8.0.3.0.", data:"1 1 2 3 4 5 6 7 8 9 1 2 3 4 5 6 7 8 9 1 2 3 4 5 6 7 8 9 1 2 3 4 5 6 7 8 9 1"}
+--! ],
+--!   config: { hscale: 1, skin: 'narrow'},
+--!  head:{
+--!    tick:0,
+--!    every:2
+--!  }
+--! }
+--! </script>
+--! </div>
+--! </div>
+--! \endhtmlonly
+--! 
+--! REPEATED START
+--! 
+--! \htmlonly
+--! <div style="zoom: 1; text-align:center; overflow-x: auto; max-width: 100%;">
+--! <style>
+--! #16bitsreading_reg svg { width: 100% !important; height: auto !important; }
+--! </style>
+--! <div id="16bitsreading_reg">
+--! <script type="WaveDrom">
+--!  { signal: [
+--!   { name: "", wave: "x6...8...............................3...", data: "RSTART ADDR+R ACK REG(MSB) ACK REG(LSB) ACK STOP", period: 1},
+--!   {name: "SCL", wave: "01010101010101010101" , period: 2},
+--!   { name: "SDA",  wave: "01.0.1...0...1...........0.......1...0...",},
+--!   { name: "clk cycle",  wave: "0.6.0.8.0.8.0.8.0.8.0.8.0.8.0.8.0.8.0.3.0", data:"1 1 2 3 4 5 6 7 8 9 1 2 3 4 5 6 7 8 9 1 1 2 3 4 5 6 7 8 9 1 2 3 4 5 6 7 8 9 1 2 3 4 5 6 7 8 9 1 "}
+--! ],
+--!   config: { hscale: 1, skin: 'narrow', "fontSize": 1},
+--!  head:{
+--!    tick:76,
+--!    every:2
+--!  }
+--! }
+--! </script>
+--! </div>
+--! </div>
+--! \endhtmlonly
+--! 
+--! REGISTER
+--! 
+--! \htmlonly
+--! <div style="zoom: 0.6; text-align:center; overflow-x: auto; max-width: 100%;">
+--! <style>
+--! #16bitsreading_reg svg { width: 100% !important; height: auto !important; }
+--! </style>
+--! <div id="16bitsreading_reg">
+--! <script type="WaveDrom">
+--! { signal: [
+--!   { name: "", wave: "x5...............................3...5...............................3...9...u", data: "REG_VALUE_(MSB) ACK REG_VALUE_(LSB) ACK STOP", period: 1},
+--!   {name: "SCL", wave: "01010101010101010101010101010101010101" , period: 2},
+--!   { name: "SDA",  wave: "0........................1...0...0...1...0...............1...0.......0...0.1..",},
+--!   { name: "clk cycle",  wave: "0.5.0.5.0.5.0.5.0.5.0.5.0.5.0.5.0.3.0.5.0.5.0.5.0.5.0.5.0.5.0.5.0.5.0.3.0.9.0.", data:"1 2 3 4 5 6 7 8 9 1 2 3 4 5 6 7 8 9 1 2 3 4 5 6 7 8 9 1 2 3 4 5 6 7 8 9 1"}
+--! ],
+--!   config: { hscale: 1, skin: 'narrow'},
+--!  head:{
+--!    tick:116,
+--!    every:2
+--!  }
+--! }
+--! </script>
+--! </div>
+--! </div>
+--! \endhtmlonly
+--! 
+--! MT9V111 16 bits Writing
+--! \htmlonly
+--! <div style="zoom: 1; text-align:center; overflow-x: auto; max-width: 100%;">
+--! <style>
+--! #16bitsreading svg { width: 200% !important; height: auto !important; }
+--! </style>
+--! <div id="16bitsreading">
+--! <script type="WaveDrom">
+--! { signal: [
+--!   { name: "", wave: "u7...8...............................3...7...............................3...5...............................3...5...............................3...9...u", data: "START ADDR+W ACK REG_VALUE ACK REG(MSB) ACK REG(LSB) ACK STOP", period: 1},
+--!   {},
+--!   {name: "SCL", wave: "0101010101010101010101010101010101010101010101010101010101010101010101010101u" , period: 2},
+--!   { name: "SDA",  wave: "u..0.1...0...1...........0...1...0...0...................1...0.......1...0...........................1...0...0...1...0...............1...0.......0...0.1..",},
+--!   {},
+--!   { name: "clk cycle",  wave: "0.7.0.8.0.8.0.8.0.8.0.8.0.8.0.8.0.8.0.3.0.7.0.7.0.7.0.7.0.7.0.7.0.7.0.7.0.3.0.5.0.5.0.5.0.5.0.5.0.5.0.5.0.5.0.3.0.5.0.5.0.5.0.5.0.5.0.5.0.5.0.5.0.3.0.9.0.", data:"1 1 2 3 4 5 6 7 8 9 1 2 3 4 5 6 7 8 9 1 2 3 4 5 6 7 8 9 1 2 3 4 5 6 7 8 9 1"}
+--! ],
+--!   config: { hscale: 1, skin: 'narrow'},
+--!  head:{
+--!    tick:0,
+--!    every:2
+--!  }
+--! }
+--! </script>
+--! </div>
+--! </div>
+--! \endhtmlonly
+--! 
+--! 
+--! Bloques reutilizables en la FSM:
+--!  - TX (ST_TX_*)   envía 'tx_byte' MSB-first. Al completar el bit 0 pasa a ST_RACK_* para recibir el ACK del esclavo.
+--!                  Tras el ACK va a 'seq_next'.
+--!  - RX (ST_RX_*)   recibe un byte en 'rx_byte' MSB-first. Al completar el bit 0 pasa a ST_MACK_* donde el master envía ACK o NACK según 'send_nack'. 
+--!                  Tras el ACK/NACK va a 'seq_next'.
+--!  - START (ST_START_*) genera condición START o Repeated START.
+--!                  Tras completar carga tx_byte con la dirección y salta a TX.
+--!                  La señal 'start_rd_mode' indica si la dirección va con R/W='1'.
+--!   @warning Los estados ST_LOAD_DATA_H y ST_LOAD_NEXT_DATA_H añaden un ciclo de latencia para que 'wr_word' se estabilice antes de cargarlo en 'tx_byte'. Sin este ciclo extra, ST_TX_0 arrancaba con el valor antiguo de tx_byte.
+--! 

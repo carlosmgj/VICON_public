@@ -1,0 +1,703 @@
+/*!
+\page page_reports REPORTS
+
+\brief Reportes de análisis estático y verificación de estilo del código VHDL.
+
+Generated: 02/08/2026 21:04
+
+\tableofcontents
+
+\section sec_report_ghdl GHDL — ❌ 6 errors, 3 warnings
+
+\par Summary
+| Tool | Total | Errors | Warnings |
+|------|-------|--------|----------|
+| `GHDL` | 9 | 6 | 3 |
+
+\par Issues by file
+
+\subsection sec_ghdl_TOP_vhd TOP.vhd (2 errors, 1 warnings)
+
+| Line | Col | Severity | Rule | Message |
+|------|-----|----------|------|---------|
+| 8 | 9 | 🔴 error | — | cannot find resource library "unisim" |
+| 9 | 12 | 🟡 warning | — | unit "vcomponents" not found in library "UNISIM" |
+| 57 | 21 | 🔴 error | — | entity "TOP" was not analysed |
+
+\subsection sec_ghdl_ftdi_agent_vhd ftdi_agent.vhd (2 errors, 1 warnings)
+
+| Line | Col | Severity | Rule | Message |
+|------|-----|----------|------|---------|
+| 25 | 9 | 🔴 error | — | cannot find resource library "uvvm_util" |
+| 26 | 19 | 🟡 warning | — | unit "uvvm_util_context" not found in library "uvvm_util" |
+| 48 | 21 | 🔴 error | — | entity "ftdi_agent" was not analysed |
+
+\subsection sec_ghdl_testbench_vhd testbench.vhd (2 errors, 1 warnings)
+
+| Line | Col | Severity | Rule | Message |
+|------|-----|----------|------|---------|
+| 14 | 9 | 🔴 error | — | cannot find resource library "uvvm_util" |
+| 15 | 19 | 🟡 warning | — | unit "uvvm_util_context" not found in library "uvvm_util" |
+| 35 | 21 | 🔴 error | — | entity "testbench" was not analysed |
+
+\section sec_report_vsg VSG — ❌ 580 errors, 0 warnings
+
+\par Summary
+| Tool | Total | Errors | Warnings |
+|------|-------|--------|----------|
+| `VSG` | 580 | 580 | 0 |
+
+\par Issues by file
+
+\subsection sec_vsg_TOP_vhd TOP.vhd (99 errors, 0 warnings)
+
+| Line | Col | Severity | Rule | Message |
+|------|-----|----------|------|---------|
+| 58 | 0 | 🔴 error | `whitespace_001` | Remove trailing whitespace |
+| 108 | 0 | 🔴 error | `record_type_definition_005` | Add record type simple name |
+| 139 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 140 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 145 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 146 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 147 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 148 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 149 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 150 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 151 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 202 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 203 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 209 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 210 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 211 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 212 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 213 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 214 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 217 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 219 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 238 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 240 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 241 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 274 | 0 | 🔴 error | `conditional_waveforms_001` | move code after else to next line. |
+| 275 | 0 | 🔴 error | `conditional_waveforms_001` | move code after else to next line. |
+| 281 | 0 | 🔴 error | `conditional_waveforms_001` | move code after else to next line. |
+| 283 | 0 | 🔴 error | `conditional_waveforms_001` | move code after else to next line. |
+| 284 | 0 | 🔴 error | `conditional_waveforms_001` | move code after else to next line. |
+| 285 | 0 | 🔴 error | `conditional_waveforms_001` | move code after else to next line. |
+| 286 | 0 | 🔴 error | `conditional_waveforms_001` | move code after else to next line. |
+| 287 | 0 | 🔴 error | `conditional_waveforms_001` | move code after else to next line. |
+| 288 | 0 | 🔴 error | `conditional_waveforms_001` | move code after else to next line. |
+| 290 | 0 | 🔴 error | `conditional_waveforms_001` | move code after else to next line. |
+| 297 | 0 | 🔴 error | `conditional_waveforms_001` | move code after else to next line. |
+| 306 | 0 | 🔴 error | `instantiation_033` | Add *component* keyword |
+| 307 | 0 | 🔴 error | `port_map_004` | Move ) to next line. |
+| 307 | 0 | 🔴 error | `port_map_005` | Move port assignment to its own line. |
+| 307 | 0 | 🔴 error | `port_map_009` | Move multiple port assignments to their own lines. |
+| 341 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 344 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 372 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 381 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 390 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 397 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 406 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 408 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 414 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 423 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 425 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 430 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 433 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 449 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 451 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 453 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 463 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 472 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 474 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 481 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 488 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 497 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 499 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 505 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 514 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 516 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 522 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 524 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 533 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 547 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 571 | 0 | 🔴 error | `instantiation_034` | Change to component instantiation |
+| 571 | 0 | 🔴 error | `instantiation_036` | Add architecture identifier |
+| 581 | 0 | 🔴 error | `instantiation_034` | Change to component instantiation |
+| 581 | 0 | 🔴 error | `instantiation_036` | Add architecture identifier |
+| 597 | 0 | 🔴 error | `instantiation_034` | Change to component instantiation |
+| 597 | 0 | 🔴 error | `instantiation_036` | Add architecture identifier |
+| 618 | 0 | 🔴 error | `instantiation_034` | Change to component instantiation |
+| 618 | 0 | 🔴 error | `instantiation_036` | Add architecture identifier |
+| 625 | 0 | 🔴 error | `port_map_010` | Remove comment. |
+| 627 | 0 | 🔴 error | `port_map_010` | Remove comment. |
+| 629 | 0 | 🔴 error | `port_map_010` | Remove comment. |
+| 630 | 0 | 🔴 error | `port_map_010` | Remove comment. |
+| 631 | 0 | 🔴 error | `port_map_010` | Remove comment. |
+| 632 | 0 | 🔴 error | `port_map_010` | Remove comment. |
+| 634 | 0 | 🔴 error | `port_map_010` | Remove comment. |
+| 635 | 0 | 🔴 error | `port_map_010` | Remove comment. |
+| 636 | 0 | 🔴 error | `port_map_010` | Remove comment. |
+| 637 | 0 | 🔴 error | `port_map_010` | Remove comment. |
+| 638 | 0 | 🔴 error | `port_map_010` | Remove comment. |
+| 641 | 0 | 🔴 error | `instantiation_034` | Change to component instantiation |
+| 641 | 0 | 🔴 error | `instantiation_036` | Add architecture identifier |
+| 675 | 0 | 🔴 error | `instantiation_034` | Change to component instantiation |
+| 675 | 0 | 🔴 error | `instantiation_036` | Add architecture identifier |
+| 693 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 702 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 711 | 0 | 🔴 error | `conditional_waveforms_001` | move code after else to next line. |
+| 712 | 0 | 🔴 error | `conditional_waveforms_001` | move code after else to next line. |
+| 713 | 0 | 🔴 error | `conditional_waveforms_001` | move code after else to next line. |
+| 717 | 0 | 🔴 error | `instantiation_034` | Change to component instantiation |
+| 717 | 0 | 🔴 error | `instantiation_036` | Add architecture identifier |
+
+\subsection sec_vsg_clock_generator_vhd clock_generator.vhd (4 errors, 0 warnings)
+
+| Line | Col | Severity | Rule | Message |
+|------|-----|----------|------|---------|
+| 23 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 24 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 32 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 43 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+
+\subsection sec_vsg_cmd_processor_vhd cmd_processor.vhd (39 errors, 0 warnings)
+
+| Line | Col | Severity | Rule | Message |
+|------|-----|----------|------|---------|
+| 88 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 89 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 90 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 91 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 92 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 93 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 94 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 95 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 96 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 97 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 98 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 116 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 119 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 120 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 121 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 122 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 125 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 126 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 127 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 128 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 143 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 146 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 147 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 147 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 148 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 149 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 150 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 151 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 190 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 193 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 205 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 221 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 229 | 0 | 🔴 error | `case_012` | Move code after the => to the next line. |
+| 235 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 246 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 249 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 264 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 276 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 285 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+
+\subsection sec_vsg_config_pkg_vhd config_pkg.vhd (5 errors, 0 warnings)
+
+| Line | Col | Severity | Rule | Message |
+|------|-----|----------|------|---------|
+| 8 | 0 | 🔴 error | `whitespace_001` | Remove trailing whitespace |
+| 13 | 0 | 🔴 error | `whitespace_001` | Remove trailing whitespace |
+| 18 | 0 | 🔴 error | `whitespace_001` | Remove trailing whitespace |
+| 43 | 0 | 🔴 error | `whitespace_001` | Remove trailing whitespace |
+| 48 | 0 | 🔴 error | `whitespace_001` | Remove trailing whitespace |
+
+\subsection sec_vsg_frame_capture_vhd frame_capture.vhd (41 errors, 0 warnings)
+
+| Line | Col | Severity | Rule | Message |
+|------|-----|----------|------|---------|
+| 59 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 61 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 62 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 63 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 64 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 68 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 69 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 70 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 72 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 80 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 82 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 93 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 95 | 0 | 🔴 error | `whitespace_001` | Remove trailing whitespace |
+| 97 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 120 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 121 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 127 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 129 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 130 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 143 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 150 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 157 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 164 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 173 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 175 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 185 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 190 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 191 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 192 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 192 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 193 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 193 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 194 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 194 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 195 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 195 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 196 | 0 | 🔴 error | `if_022` | Move code after *else* keyword to the next line. |
+| 203 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 215 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 220 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 232 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+
+\subsection sec_vsg_ftdi_agent_vhd ftdi_agent.vhd (51 errors, 0 warnings)
+
+| Line | Col | Severity | Rule | Message |
+|------|-----|----------|------|---------|
+| 75 | 0 | 🔴 error | `record_type_definition_005` | Add record type simple name |
+| 93 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 94 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 95 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 96 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 97 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 98 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 99 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 100 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 101 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 102 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 104 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 106 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 107 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 108 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 121 | 0 | 🔴 error | `conditional_waveforms_001` | move code after else to next line. |
+| 121 | 0 | 🔴 error | `when_001` | Move "ELSE" to the right of ")" on line 120 |
+| 123 | 0 | 🔴 error | `conditional_waveforms_001` | move code after else to next line. |
+| 124 | 0 | 🔴 error | `conditional_waveforms_001` | move code after else to next line. |
+| 133 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 143 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 145 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 152 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 153 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 160 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 162 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 171 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 174 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 175 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 182 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 185 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 210 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 216 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 231 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 232 | 0 | 🔴 error | `variable_007` | Remove default assignment. |
+| 233 | 0 | 🔴 error | `variable_007` | Remove default assignment. |
+| 234 | 0 | 🔴 error | `variable_007` | Remove default assignment. |
+| 237 | 0 | 🔴 error | `variable_007` | Remove default assignment. |
+| 238 | 0 | 🔴 error | `variable_007` | Remove default assignment. |
+| 239 | 0 | 🔴 error | `variable_007` | Remove default assignment. |
+| 240 | 0 | 🔴 error | `variable_007` | Remove default assignment. |
+| 241 | 0 | 🔴 error | `variable_007` | Remove default assignment. |
+| 267 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 270 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 292 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 326 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 333 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 362 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 365 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 377 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 394 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+
+\subsection sec_vsg_ftdi_controller_vhd ftdi_controller.vhd (34 errors, 0 warnings)
+
+| Line | Col | Severity | Rule | Message |
+|------|-----|----------|------|---------|
+| 87 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 92 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 93 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 94 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 95 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 96 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 120 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 121 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 122 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 123 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 124 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 125 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 126 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 127 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 128 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 129 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 130 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 131 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 137 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 187 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 190 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 199 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 201 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 221 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 224 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 253 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 289 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 302 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 311 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 320 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 350 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 383 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 387 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 390 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+
+\subsection sec_vsg_i2c_controller_vhd i2c_controller.vhd (116 errors, 0 warnings)
+
+| Line | Col | Severity | Rule | Message |
+|------|-----|----------|------|---------|
+| 41 | 0 | 🔴 error | `whitespace_001` | Remove trailing whitespace |
+| 87 | 0 | 🔴 error | `whitespace_001` | Remove trailing whitespace |
+| 94 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 95 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 96 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 97 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 100 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 107 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 108 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 109 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 110 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 113 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 114 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 116 | 0 | 🔴 error | `whitespace_001` | Remove trailing whitespace |
+| 148 | 0 | 🔴 error | `whitespace_001` | Remove trailing whitespace |
+| 149 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 150 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 156 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 157 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 158 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 159 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 160 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 161 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 167 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 168 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 169 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 170 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 171 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 172 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 178 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 179 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 185 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 186 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 187 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 193 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 194 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 195 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 264 | 0 | 🔴 error | `conditional_waveforms_001` | move code after else to next line. |
+| 265 | 0 | 🔴 error | `conditional_waveforms_001` | move code after else to next line. |
+| 270 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 275 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 282 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 286 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 289 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 289 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 290 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 290 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 299 | 0 | 🔴 error | `conditional_waveforms_001` | move code after else to next line. |
+| 300 | 0 | 🔴 error | `conditional_waveforms_001` | move code after else to next line. |
+| 305 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 310 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 317 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 321 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 324 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 324 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 325 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 325 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 336 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 339 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 342 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 359 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 362 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 401 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 402 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 421 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 422 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 422 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 427 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 428 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 432 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 438 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 441 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 457 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 465 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 466 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 470 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 475 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 477 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 492 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 493 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 493 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 497 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 498 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 502 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 503 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 511 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 512 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 530 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 531 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 565 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 568 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 601 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 614 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 618 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 636 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 637 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 637 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 641 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 642 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 646 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 647 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 651 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 653 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 666 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 674 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 675 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 679 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 684 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 685 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 692 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 693 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 693 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 698 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 699 | 0 | 🔴 error | `sequential_007` | Move code after the ; to the next line. |
+| 703 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 709 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+
+\subsection sec_vsg_ila_stub_vhd ila_stub.vhd (17 errors, 0 warnings)
+
+| Line | Col | Severity | Rule | Message |
+|------|-----|----------|------|---------|
+| 6 | 0 | 🔴 error | `port_007` | Change number of spaces after *in* to 4. |
+| 7 | 0 | 🔴 error | `port_007` | Change number of spaces after *in* to 4. |
+| 8 | 0 | 🔴 error | `port_007` | Change number of spaces after *in* to 4. |
+| 9 | 0 | 🔴 error | `port_007` | Change number of spaces after *in* to 4. |
+| 10 | 0 | 🔴 error | `port_007` | Change number of spaces after *in* to 4. |
+| 11 | 0 | 🔴 error | `port_007` | Change number of spaces after *in* to 4. |
+| 26 | 0 | 🔴 error | `port_007` | Change number of spaces after *in* to 4. |
+| 27 | 0 | 🔴 error | `port_007` | Change number of spaces after *in* to 4. |
+| 28 | 0 | 🔴 error | `port_007` | Change number of spaces after *in* to 4. |
+| 29 | 0 | 🔴 error | `port_007` | Change number of spaces after *in* to 4. |
+| 30 | 0 | 🔴 error | `port_007` | Change number of spaces after *in* to 4. |
+| 31 | 0 | 🔴 error | `port_007` | Change number of spaces after *in* to 4. |
+| 32 | 0 | 🔴 error | `port_007` | Change number of spaces after *in* to 4. |
+| 33 | 0 | 🔴 error | `port_007` | Change number of spaces after *in* to 4. |
+| 34 | 0 | 🔴 error | `port_007` | Change number of spaces after *in* to 4. |
+| 35 | 0 | 🔴 error | `port_007` | Change number of spaces after *in* to 4. |
+| 36 | 0 | 🔴 error | `port_007` | Change number of spaces after *in* to 4. |
+
+\subsection sec_vsg_mt9v111_i2c_vhd mt9v111_i2c.vhd (54 errors, 0 warnings)
+
+| Line | Col | Severity | Rule | Message |
+|------|-----|----------|------|---------|
+| 39 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 46 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 51 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 52 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 53 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 57 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 63 | 0 | 🔴 error | `variable_007` | Remove default assignment. |
+| 64 | 0 | 🔴 error | `variable_007` | Remove default assignment. |
+| 65 | 0 | 🔴 error | `variable_007` | Remove default assignment. |
+| 66 | 0 | 🔴 error | `variable_007` | Remove default assignment. |
+| 79 | 0 | 🔴 error | `procedure_014` | Add procedure designator |
+| 106 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 106 | 0 | 🔴 error | `if_020` | Move *end if* keywords to their own line. |
+| 106 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 113 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 117 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 121 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 129 | 0 | 🔴 error | `procedure_014` | Add procedure designator |
+| 141 | 0 | 🔴 error | `procedure_014` | Add procedure designator |
+| 160 | 0 | 🔴 error | `procedure_014` | Add procedure designator |
+| 166 | 0 | 🔴 error | `procedure_013` | Move parenthesis to next line. |
+| 166 | 0 | 🔴 error | `procedure_013` | Move parenthesis to next line. |
+| 170 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 170 | 0 | 🔴 error | `if_020` | Move *end if* keywords to their own line. |
+| 170 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 172 | 0 | 🔴 error | `procedure_014` | Add procedure designator |
+| 183 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 196 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 201 | 0 | 🔴 error | `procedure_014` | Add procedure designator |
+| 217 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 217 | 0 | 🔴 error | `if_020` | Move *end if* keywords to their own line. |
+| 217 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 218 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 218 | 0 | 🔴 error | `if_020` | Move *end if* keywords to their own line. |
+| 218 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 226 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 237 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 237 | 0 | 🔴 error | `if_020` | Move *end if* keywords to their own line. |
+| 237 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 251 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 257 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 261 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 261 | 0 | 🔴 error | `if_020` | Move *end if* keywords to their own line. |
+| 261 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 262 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 262 | 0 | 🔴 error | `if_020` | Move *end if* keywords to their own line. |
+| 262 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 263 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 263 | 0 | 🔴 error | `if_020` | Move *end if* keywords to their own line. |
+| 263 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 279 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 280 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 284 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 292 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+
+\subsection sec_vsg_mt9v111_image_vhd mt9v111_image.vhd (17 errors, 0 warnings)
+
+| Line | Col | Severity | Rule | Message |
+|------|-----|----------|------|---------|
+| 65 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 75 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 76 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 77 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 79 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 80 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 81 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 101 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 104 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 119 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 131 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 152 | 0 | 🔴 error | `case_012` | Move code after the => to the next line. |
+| 153 | 0 | 🔴 error | `case_012` | Move code after the => to the next line. |
+| 158 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 160 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 175 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 185 | 0 | 🔴 error | `whitespace_001` | Remove trailing whitespace |
+
+\subsection sec_vsg_sim_utils_pkg_vhd sim_utils_pkg.vhd (18 errors, 0 warnings)
+
+| Line | Col | Severity | Rule | Message |
+|------|-----|----------|------|---------|
+| 31 | 0 | 🔴 error | `function_019` | Move parenthesis to next line. |
+| 31 | 0 | 🔴 error | `function_019` | Move parenthesis to next line. |
+| 36 | 0 | 🔴 error | `function_019` | Move parenthesis to next line. |
+| 36 | 0 | 🔴 error | `function_019` | Move parenthesis to next line. |
+| 36 | 0 | 🔴 error | `function_019` | Move parenthesis to next line. |
+| 71 | 0 | 🔴 error | `function_019` | Move parenthesis to next line. |
+| 71 | 0 | 🔴 error | `function_019` | Move parenthesis to next line. |
+| 75 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 75 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 76 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 76 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 77 | 0 | 🔴 error | `if_022` | Move code after *else* keyword to the next line. |
+| 84 | 0 | 🔴 error | `function_019` | Move parenthesis to next line. |
+| 84 | 0 | 🔴 error | `function_019` | Move parenthesis to next line. |
+| 84 | 0 | 🔴 error | `function_019` | Move parenthesis to next line. |
+| 108 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 128 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 136 | 0 | 🔴 error | `report_statement_002` | Place **severity** keyword on its own line. |
+
+\subsection sec_vsg_testbench_vhd testbench.vhd (84 errors, 0 warnings)
+
+| Line | Col | Severity | Rule | Message |
+|------|-----|----------|------|---------|
+| 45 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 47 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 48 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 52 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 53 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 54 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 56 | 0 | 🔴 error | `signal_007` | Remove default assignment. |
+| 69 | 0 | 🔴 error | `function_019` | Move parenthesis to next line. |
+| 69 | 0 | 🔴 error | `function_019` | Move parenthesis to next line. |
+| 71 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 71 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 72 | 0 | 🔴 error | `if_022` | Move code after *else* keyword to the next line. |
+| 74 | 0 | 🔴 error | `function_020` | Add function designator |
+| 81 | 0 | 🔴 error | `instantiation_034` | Change to component instantiation |
+| 81 | 0 | 🔴 error | `instantiation_036` | Add architecture identifier |
+| 82 | 0 | 🔴 error | `port_map_004` | Move ) to next line. |
+| 82 | 0 | 🔴 error | `port_map_005` | Move port assignment to its own line. |
+| 82 | 0 | 🔴 error | `port_map_009` | Move multiple port assignments to their own lines. |
+| 86 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 96 | 0 | 🔴 error | `instantiation_034` | Change to component instantiation |
+| 96 | 0 | 🔴 error | `instantiation_036` | Add architecture identifier |
+| 132 | 0 | 🔴 error | `instantiation_034` | Change to component instantiation |
+| 132 | 0 | 🔴 error | `instantiation_036` | Add architecture identifier |
+| 133 | 0 | 🔴 error | `generic_map_004` | Move ) to next line. |
+| 133 | 0 | 🔴 error | `generic_map_005` | Move generic assignment to its own line. |
+| 134 | 0 | 🔴 error | `port_map_004` | Move ) to next line. |
+| 134 | 0 | 🔴 error | `port_map_005` | Move port assignment to its own line. |
+| 134 | 0 | 🔴 error | `port_map_009` | Move multiple port assignments to their own lines. |
+| 136 | 0 | 🔴 error | `instantiation_034` | Change to component instantiation |
+| 136 | 0 | 🔴 error | `instantiation_036` | Add architecture identifier |
+| 141 | 0 | 🔴 error | `port_map_010` | Remove comment. |
+| 147 | 0 | 🔴 error | `port_map_010` | Remove comment. |
+| 153 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 164 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 166 | 0 | 🔴 error | `case_012` | Move code after the => to the next line. |
+| 167 | 0 | 🔴 error | `case_012` | Move code after the => to the next line. |
+| 168 | 0 | 🔴 error | `case_012` | Move code after the => to the next line. |
+| 169 | 0 | 🔴 error | `case_012` | Move code after the => to the next line. |
+| 170 | 0 | 🔴 error | `case_012` | Move code after the => to the next line. |
+| 171 | 0 | 🔴 error | `case_012` | Move code after the => to the next line. |
+| 172 | 0 | 🔴 error | `case_012` | Move code after the => to the next line. |
+| 173 | 0 | 🔴 error | `case_012` | Move code after the => to the next line. |
+| 174 | 0 | 🔴 error | `case_012` | Move code after the => to the next line. |
+| 175 | 0 | 🔴 error | `case_012` | Move code after the => to the next line. |
+| 176 | 0 | 🔴 error | `case_012` | Move code after the => to the next line. |
+| 177 | 0 | 🔴 error | `case_012` | Move code after the => to the next line. |
+| 178 | 0 | 🔴 error | `case_012` | Move code after the => to the next line. |
+| 179 | 0 | 🔴 error | `case_012` | Move code after the => to the next line. |
+| 180 | 0 | 🔴 error | `case_012` | Move code after the => to the next line. |
+| 181 | 0 | 🔴 error | `case_012` | Move code after the => to the next line. |
+| 186 | 0 | 🔴 error | `case_012` | Move code after the => to the next line. |
+| 208 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 209 | 0 | 🔴 error | `variable_007` | Remove default assignment. |
+| 223 | 0 | 🔴 error | `process_012` | Add *is* keyword |
+| 242 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 242 | 0 | 🔴 error | `if_020` | Move *end if* keywords to their own line. |
+| 242 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 248 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 252 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 257 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 262 | 0 | 🔴 error | `procedure_014` | Add procedure designator |
+| 283 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 283 | 0 | 🔴 error | `if_020` | Move *end if* keywords to their own line. |
+| 283 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 284 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 284 | 0 | 🔴 error | `if_020` | Move *end if* keywords to their own line. |
+| 284 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 290 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 290 | 0 | 🔴 error | `if_020` | Move *end if* keywords to their own line. |
+| 290 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 291 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 291 | 0 | 🔴 error | `if_020` | Move *end if* keywords to their own line. |
+| 291 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 292 | 0 | 🔴 error | `procedure_014` | Add procedure designator |
+| 298 | 0 | 🔴 error | `variable_007` | Remove default assignment. |
+| 304 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 304 | 0 | 🔴 error | `if_020` | Move *end if* keywords to their own line. |
+| 304 | 0 | 🔴 error | `if_024` | Move code after *then* keyword to the next line. |
+| 310 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 314 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 319 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 333 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 338 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+| 342 | 0 | 🔴 error | `if_002` | Enclose condition in ()'s. |
+
+\subsection sec_vsg_top_pkg_vhd top_pkg.vhd (1 errors, 0 warnings)
+
+| Line | Col | Severity | Rule | Message |
+|------|-----|----------|------|---------|
+| 15 | 0 | 🔴 error | `type_010` | Insert blank line above |
+
+
+*/

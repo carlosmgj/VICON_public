@@ -1,0 +1,51 @@
+\babel@toc {spanish}{}\relax 
+\deactivateaddvspace 
+\babel@toc {spanish}{}\relax 
+\ttl@tocsep 
+\ttl@tocsep 
+\ttl@tocsep 
+\ttl@tocsep 
+\ttl@tocsep 
+\ttl@tocsep 
+\ttl@tocsep 
+\ttl@tocsep 
+\ttl@tocsep 
+\contentsline {figure}{\numberline {1.1}{\ignorespaces Planificación temporal del proyecto.}}{4}{figure.caption.13}%
+\ttl@tocsep 
+\ttl@tocsep 
+\ttl@tocsep 
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Diagrama general de requisitos.}}{14}{figure.caption.23}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Diagrama de casos de uso.}}{17}{figure.caption.25}%
+\ttl@tocsep 
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Arquitectura global del sistema VICON.}}{21}{figure.caption.26}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Descomposición parcial de la arquitectura global.}}{22}{figure.caption.30}%
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Arquitectura física del sistema VICON (diagrama de bloques).}}{22}{figure.caption.32}%
+\contentsline {figure}{\numberline {5.4}{\ignorespaces Captura con analizador lógico de las señales del MT9V111 (\texttt {RESETN}, \texttt {PIXLCLK}, \texttt {VSYNC}, \texttt {HREF}, \texttt {D[7:0]}) durante la fase inicial de caracterización.}}{24}{figure.caption.34}%
+\contentsline {figure}{\numberline {5.5}{\ignorespaces Conexión del sensor CMOS a la Basys 3.}}{25}{figure.caption.39}%
+\contentsline {figure}{\numberline {5.6}{\ignorespaces Arquitectura lógica del sistema VICON: visión general.}}{28}{figure.caption.43}%
+\contentsline {figure}{\numberline {5.7}{\ignorespaces Arquitectura lógica de la FPGA: módulos, señales y dominios de reloj.}}{30}{figure.caption.44}%
+\ttl@tocsep 
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Tramas para escritura y lectura de 16~bits en el bus I2C del sensor MT9V111.}}{36}{figure.caption.46}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Envío de dirección de esclavo}}}{36}{subfigure.1.1}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Envío de dirección del registro \textbf {+ W}}}}{36}{subfigure.1.2}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {\textit {Repeated START} y envío de dirección del registro \textbf {+ R}}}}{36}{subfigure.1.3}%
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Envío de valor del registro: MSB \& LSB}}}{36}{subfigure.1.4}%
+\contentsline {figure}{\numberline {6.2}{\ignorespaces Cronograma de las 4 fases de SCLK.}}{37}{figure.caption.47}%
+\contentsline {figure}{\numberline {6.3}{\ignorespaces Vista general de la simulación: configuración I2C, inicio de captura y ejecución de comandos.}}{44}{figure.caption.55}%
+\contentsline {figure}{\numberline {6.4}{\ignorespaces Detalle del generador de imagen sintética: contadores de columna y fila de \texttt {frame\_capture}.}}{45}{figure.caption.56}%
+\contentsline {figure}{\numberline {6.5}{\ignorespaces Recepción y decodificación de un comando LED (\texttt {CMD~0x01}) durante la simulación.}}{45}{figure.caption.57}%
+\ttl@tocsep 
+\ttl@tocsep 
+\ttl@tocsep 
+\ttl@tocsep 
+\ttl@tocsep 
+\def \@chapapp {\appendixname }
+\ttl@tocsep 
+\contentsline {figure}{\numberline {A.1}{\ignorespaces Estado Inicial de la Interfaz Gráfica de Usuario.}}{78}{figure.caption.80}%
+\contentsline {figure}{\numberline {A.2}{\ignorespaces GUI: envío de comando I2C para configurar >30fps.}}{78}{figure.caption.81}%
+\contentsline {figure}{\numberline {A.3}{\ignorespaces GUI: envío de comando I2C para configurar >30fps.}}{79}{figure.caption.82}%
+\ttl@tocsep 
+\contentsline {figure}{\numberline {B.1}{\ignorespaces FSM de configuración del sensor en \texttt {TOP.vhd}.}}{82}{figure.caption.85}%
+\contentsline {figure}{\numberline {B.2}{\ignorespaces FSM de \texttt {i2c\_controller.vhd}.}}{83}{figure.caption.86}%
+\contentsline {figure}{\numberline {B.3}{\ignorespaces FSM de recepción (\texttt {p\_rx}) de \texttt {ftdi\_controller.vhd}.}}{84}{figure.caption.87}%
+\providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 

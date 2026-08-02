@@ -1,0 +1,82 @@
+% !TEX root = ../main.tex
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+\chapter{Introducción}
+\label{chap:introduccion}
+
+\section{Motivación}
+
+La visión artificial constituye uno de los campos de mayor crecimiento dentro de la ingeniería electrónica actual. 
+La capacidad de adquirir, procesar y transmitir imágenes en tiempo real desde plataformas de bajo coste y reducidas dimensiones abre la puerta a multitud de aplicaciones industriales, médicas y de seguridad. Sin embargo, el diseño de estos sistemas presenta retos técnicos significativos: el ancho de banda necesario para transportar estos flujos de vídeo sin comprimir, la latencia introducida por las interfaces de comunicación y la sincronización entre dominios de reloj diferentes son problemas que requieren soluciones a nivel de Hardware.
+
+Las \ac{FPGA}s ofrecen ventajas únicas frente a los microcontroladores o los procesadores de propósito general: paralelismo, la posibilidad de implementar la lógica de captura y transmisión de imagen sin necesidad de sistemas operativos ni de \textit{drivers} complejos, etc.
+
+La Basys~3, basada en la familia Artix-7 de Xilinx, es una plataforma accesible y utilizada en entornos académicos que permite demostrar un sistema de visión embebido completo.
+
+\section{Objetivos}
+
+El presente \ac{TFM} tiene como objetivo principal el diseño, implementación y verificación de \ac{VICON}, un sistema de adquisición (captura) y transmisión de imagen configurable basado en \ac{FPGA}. Los objetivos específicos son:
+
+\begin{itemize}
+    \item Diseñar en \ac{VHDL} el Hardware necesario para capturar imágenes del sensor CMOS MT9V111, incluyendo la interfaz de configuración I2C y el módulo de captura de trama.
+    \item Implementar un controlador de alta velocidad para el chip FT232H de FTDI en modo \textit{Synchronous \ac{FIFO}}, capaz de transmitir el flujo de imagen hacia un PC (Host) y recibir los comandos en sentido contrario.
+    \item Gestionar correctamente los \ac{CDC} entre los distintos dominios presentes en el diseño (reloj del sistema, reloj de píxel de MT9V111 y reloj del FT232H).
+    \item Verificar el diseño mediante simulación, incluyendo agentes pertenecientes a \ac{UVVM}, así como agentes de simulación para el sensor I2C y el FT232H.
+    \item Desarrollar una aplicación de visualización en PC o \ac{SW} con Qt y OpenCV que reciba el flujo de imagen y permita enviar comandos de control a la \ac{FPGA}.
+    \item Demostrar el funcionamiento del sistema completo en Hardware real sobre la plataforma Basys~3.
+\end{itemize}
+
+\section{Entorno de usuarios}
+
+Este \ac{TFM} va dirigido principalmente a estudiantes e ingenieros con conocimientos básicos de electrónica digital y \ac{VHDL} que deseen iniciarse en el diseño de sistemas de visión embebidos sobre \ac{FPGA}. También resulta de interés para desarrolladores que trabajen con el chip FT232H en modo \textit{Synchronous FIFO}, dada la escasez de ejemplos completos y documentados de este modo de operación en \ac{VHDL}.
+
+\section{Directivas del proyecto}
+
+La Tabla~\ref{tab:problema_solucion} resume, de forma esquemática, el problema abordado por este \ac{TFM} y la solución propuesta.
+
+\begin{table}[H]
+\centering
+\caption{Descripción del problema y de la solución propuesta.}
+\label{tab:problema_solucion}
+\begin{tabular}{>{\raggedright\arraybackslash}p{3cm}>{\raggedright\arraybackslash}p{10cm}}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Problema}} & {\color{white}\textbf{Descripción}} \\
+\rowcolor[HTML]{C0E6F5}
+Sistema afectado & Necesidad de un sistema de adquisición y transmisión de vídeo en tiempo real desde un sensor CMOS hacia un PC, sin recurrir a plataformas con procesador embebido (SoC/Zynq) ni a interfaces de vídeo estándar como HDMI. \\
+Consecuencias & Los prototipos académicos existentes suelen depender de plataformas caras (Zynq) o de interfaces de alto nivel que ocultan el diseño RTL de la captura y el enlace de comunicaciones, dificultando su uso como plataforma de aprendizaje. \\
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Solución propuesta}} & {\color{white}\textbf{Descripción}} \\
+\rowcolor[HTML]{C0E6F5}
+Enfoque & Diseñar íntegramente en \ac{VHDL}, sobre una FPGA de bajo coste (Basys~3), la cadena completa de adquisición de frames (sensor MT9V111), transmisión (FT232H en modo \textit{Synchronous FIFO}) y visualización/control (aplicación C++/Qt/OpenCV en el Host). \\
+Beneficios & Plataforma completa, documentada y verificada (simulación + hardware real) que sirve como demostrador funcional. \\
+\end{tabular}
+\end{table}
+
+\section{Alternativas y competencia}
+Entre las alternativas existentes para resolver un problema similar destacan:
+\begin{itemize}
+    \item \textbf{Plataformas SoC (Xilinx Zynq y similares)}: combinan un procesador ARM con lógica programable, lo que simplifica notablemente el procesamiento de imagen (Linux, OpenCV nativo, \textit{drivers} de cámara ya existentes) a costa de un mayor coste económico y de una menor transparencia sobre el diseño RTL de bajo nivel (véase la Sección~\ref{chap:estado_del_arte}). Se puede tomar como ejemplo el trabajo realizado en la asignatura  \texttt{Intensificación de FPGAs} cursada en este máster.
+    \item \textbf{Cámaras industriales inteligentes (\textit{smart cameras})}: soluciones comerciales que integran sensor, procesado y salida de vídeo estandarizada, pensadas para producción y no para el aprendizaje del diseño de la cadena de adquisición.
+    \item \textbf{Raspberry Pi u otras SBC con módulo de cámara}: solución de bajo coste y fácil programación en Python/C++, pero sin control a nivel de ciclo de reloj sobre la captura ni posibilidad de implementar lógica de procesamiento en paralelo.
+\end{itemize}
+
+Frente a estas alternativas, \ac{VICON} se diferencia por implementar toda la cadena de transmisión de datos (captura, \textit{framing} y transmisión de alta velocidad) directamente en \ac{RTL} sobre una FPGA de gama básica.
+
+\section{Planificación temporal}
+El desarrollo de este \ac{TFM} se ha organizado en fases sucesivas que abarcan desde el estudio previo hasta la redacción de la memoria. La Figura~\ref{fig:gantt} muestra la planificación temporal mediante un diagrama de Gantt. Las fases de diseño, desarrollo y verificación se solapan parcialmente, mostrando el carácter iterativo del trabajo: la depuración en Hardware realimentó tanto el diseño \ac{RTL} como el \ac{SW} de visualización.
+\todo[inline, caption={Añadir Gantt}]{Aquí falta insertar una imagen del Gantt reflejando el trabajo que se inició en Marzo, la pausa de Abril y el trabajo realizado estos últimos tres meses. Se puede poner un \texttt{baseline} inicial y explicar que como pasa en todos los proyectos hay bloqueos o agentes externos que desvían las fechas de su planificación inicial.}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{gfx/pending.jpg}
+    \caption{Planificación temporal del proyecto.}
+    \label{fig:gantt}
+\end{figure}
+
+\section{Estructura de la memoria} 
+El presente documento se organiza de la siguiente forma:
+
+El capítulo~\ref{chap:estado_del_arte} menciona brevemente el estado del arte en sistemas de visión embebida sobre FPGA, las interfaces de alta velocidad hacia PC y las metodologías de verificación de Hardware. El capítulo~\ref{chap:herramientas} describe las herramientas y el entorno de desarrollo empleados. El capítulo~\ref{chap:requisitos} recoge los requisitos que guían el proyecto y los casos de uso a los que da respuesta. El capítulo~\ref{chap:descripcion_sistema} describe la arquitectura global, física y lógica del Sistema \ac{VICON}, así como el Hardware utilizado. El capítulo~\ref{chap:desarrollo} detalla el diseño a nivel \ac{RTL} de cada módulo, la estrategia de \ac{CDC} y la verificación mediante \ac{UVVM}. El capítulo~\ref{chap:software} describe el \ac{SW} de visualización desarrollado en PC. El capítulo~\ref{chap:implementacion} presenta los resultados de síntesis e implementación en Vivado, el análisis de timing y las pruebas sobre Hardware real. El capítulo~\ref{chap:resultados} recoge la verificación de los requisitos y el plan de validación del sistema. Finalmente, el capítulo~\ref{chap:conclusiones} presenta las conclusiones del trabajo y las líneas de trabajo futuro.
+
+\end{document}

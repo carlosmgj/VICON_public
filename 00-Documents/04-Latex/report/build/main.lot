@@ -1,0 +1,55 @@
+\babel@toc {spanish}{}\relax 
+\deactivateaddvspace 
+\babel@toc {spanish}{}\relax 
+\ttl@tocsep 
+\ttl@tocsep 
+\ttl@tocsep 
+\ttl@tocsep 
+\ttl@tocsep 
+\ttl@tocsep 
+\ttl@tocsep 
+\ttl@tocsep 
+\ttl@tocsep 
+\contentsline {table}{\numberline {1.1}{\ignorespaces Descripción del problema y de la solución propuesta.}}{3}{table.caption.10}%
+\ttl@tocsep 
+\ttl@tocsep 
+\ttl@tocsep 
+\contentsline {table}{\numberline {4.1}{\ignorespaces Requisitos del proyecto.}}{13}{table.4.1}%
+\contentsline {table}{\numberline {4.2}{\ignorespaces Actores del sistema.}}{16}{table.caption.24}%
+\ttl@tocsep 
+\contentsline {table}{\numberline {5.1}{\ignorespaces Asignación de pines de la FPGA para el sensor MT9V111.}}{24}{table.caption.35}%
+\contentsline {table}{\numberline {5.2}{\ignorespaces Asignación de pines de la FPGA para el bus de datos del FT232H (\texttt {ADBUS}).}}{26}{table.caption.40}%
+\contentsline {table}{\numberline {5.3}{\ignorespaces Asignación de pines de la FPGA para el bus de control del FT232H (\texttt {ACBUS}).}}{27}{table.caption.41}%
+\ttl@tocsep 
+\contentsline {table}{\numberline {6.1}{\ignorespaces Estados de la FSM de \texttt {i2c\_controller.vhd}.}}{38}{table.caption.48}%
+\contentsline {table}{\numberline {6.2}{\ignorespaces Cruces de dominio de reloj en el diseño VICON.}}{41}{table.caption.50}%
+\ttl@tocsep 
+\contentsline {table}{\numberline {7.1}{\ignorespaces Comandos PC$\rightarrow $FPGA definidos en \texttt {mainwindow.cpp}.}}{49}{table.caption.58}%
+\ttl@tocsep 
+\contentsline {table}{\numberline {8.1}{\ignorespaces Resumen de \textit {timing} tras la implementación.}}{53}{table.caption.59}%
+\contentsline {table}{\numberline {8.2}{\ignorespaces Desglose del peor camino (\texttt {s\_wr\_n\_reg} $\rightarrow $ \texttt {WR\#}).}}{53}{table.caption.60}%
+\contentsline {table}{\numberline {8.3}{\ignorespaces Utilización de recursos en la XC7A35T.}}{54}{table.caption.61}%
+\ttl@tocsep 
+\contentsline {table}{\numberline {9.1}{\ignorespaces Prueba P1.}}{59}{table.caption.64}%
+\contentsline {table}{\numberline {9.2}{\ignorespaces Prueba P2.}}{60}{table.caption.65}%
+\contentsline {table}{\numberline {9.3}{\ignorespaces Prueba P3.}}{61}{table.caption.66}%
+\contentsline {table}{\numberline {9.4}{\ignorespaces Prueba P4.}}{62}{table.caption.67}%
+\contentsline {table}{\numberline {9.5}{\ignorespaces Prueba P5.}}{63}{table.caption.68}%
+\contentsline {table}{\numberline {9.6}{\ignorespaces Prueba P6.}}{63}{table.caption.69}%
+\contentsline {table}{\numberline {9.7}{\ignorespaces Prueba P7.}}{64}{table.caption.70}%
+\contentsline {table}{\numberline {9.8}{\ignorespaces Prueba P8.}}{64}{table.caption.71}%
+\contentsline {table}{\numberline {9.9}{\ignorespaces Prueba P9.}}{65}{table.caption.72}%
+\contentsline {table}{\numberline {9.10}{\ignorespaces Entregables y pruebas de validación asociadas.}}{65}{table.caption.73}%
+\contentsline {table}{\numberline {9.11}{\ignorespaces Prueba de validación V1.}}{66}{table.caption.74}%
+\contentsline {table}{\numberline {9.12}{\ignorespaces Prueba de validación V2.}}{67}{table.caption.75}%
+\contentsline {table}{\numberline {9.13}{\ignorespaces Prueba de validación V3.}}{68}{table.caption.76}%
+\contentsline {table}{\numberline {9.14}{\ignorespaces Prueba de validación V4.}}{69}{table.caption.77}%
+\contentsline {table}{\numberline {9.15}{\ignorespaces Prueba de validación V5.}}{70}{table.caption.78}%
+\ttl@tocsep 
+\ttl@tocsep 
+\def \@chapapp {\appendixname }
+\ttl@tocsep 
+\contentsline {table}{\numberline {A.1}{\ignorespaces Comandos disponibles desde la interfaz de \texttt {vicon\_view}.}}{79}{table.caption.83}%
+\contentsline {table}{\numberline {A.2}{\ignorespaces Problemas frecuentes y soluciones.}}{80}{table.caption.84}%
+\ttl@tocsep 
+\providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 

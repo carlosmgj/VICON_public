@@ -1,0 +1,51 @@
+% !TEX root = ../main.tex
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+\chapter{Herramientas y entorno de desarrollo}
+\label{chap:herramientas}
+ 
+Este capítulo recoge las herramientas y bibliotecas empleadas a lo largo del proyecto, agrupadas según la fase en la que intervienen: diseño e implementación en FPGA, simulación y verificación, control de versiones, desarrollo del software de PC y redacción de la memoria.
+
+ 
+\section{Diseño e implementación en FPGA}
+ 
+El flujo de diseño hardware se realiza íntegramente con \textbf{Vivado 2020.2} de Xilinx. Esta herramienta cubre todas las etapas del flujo: síntesis, implementación, análisis de timing, generación de bitstream y depuración en hardware mediante el \ac{ILA}. El uso de \ac{IP}s permite reutilizar bloques funcionales ya diseñados, verificados y optimizados por el fabricante para la arquitectura deseada, lo que reduce el tiempo de desarrollo y el riesgo de errores si lo comparamos a una implementación propia con la misma funcionalidad.
+ 
+\section{Simulación y verificación}
+ 
+La simulación funcional se realiza con \textbf{ModelSim/QuestaSim} de Mentor Graphics, invocado mediante scripts \texttt{.do} que automatizan la compilación, optimización y ejecución del banco de pruebas. El script principal mapea las librerías de simulación de Vivado (compiladas previamente) y las librerías \ac{UVVM}, y lanza la simulación con resolución temporal de 1~ps.
+ 
+La metodología de verificación empleada es \ac{UVVM}, en su versión completa (no la versión Light). Las librerías utilizadas son:
+ 
+\begin{itemize}
+    \item \texttt{uvvm\_util}: utilidades de logging, gestión de alertas y funciones de comprobación (\texttt{check\_value}, \texttt{log}, \texttt{alert}).
+    \item \texttt{uvvm\_vvc\_framework}: framework de \textit{Verification Components}.
+\end{itemize}
+ 
+Las librerías \ac{UVVM} se precompilan una única vez desde el directorio raíz de la instalación (En este caso \texttt{C:/UVVM}) ejecutando \texttt{compile\_all.do}, y se referencian en cada simulación mediante \texttt{vmap} en el script \texttt{sim.do}. Es posible realizar todos los pasos que se detallan en el script mediante acciones manuales en la interfaz de usuario de Questa, pero esta metodología es más propensa a errores y no permite un buen trabajo en equipos multidisciplinares.
+ 
+\section{Control de versiones}
+ 
+El código fuente del proyecto (RTL, banco de pruebas, scripts y documentación) se gestiona con \textbf{Git}, con repositorio remoto alojado en \textbf{GitHub} (\url{https://github.com/carlosmgj/VICON}). La estrategia de ramas sigue el modelo \textit{feature branching}: cada nueva funcionalidad o corrección se desarrolla en una rama independiente (\texttt{feature/<nombre>}) y se integra en \texttt{main} mediante \textit{pull requests} una vez validada. Para este proyecto, dado que está desarrollado por una única persona, no se utilizan pull requests para mergear los cambios a la rama main, pero es lo que se considera más recomendable en entornos con múltiples desarrolladores.
+
+% Además, se ha configurado un runner de GitHub Actions con el fin de mantener una documentación actualizada del proyecto. Este runner publica la página de documentación en:
+
+\todo[inline, caption={Añadir runner GiHub}]{Añadir un párrafo explicando que se ha configurado GitHub Actions para creación de documentación dinámica y mostrar el enlace de la página creada. Al añadir scripts nuevos y cambiar la estructura se ha roto el funcionamiento. Pendiente de arreglar.}
+
+El software de visualización, nombrado \texttt{vicon\_view}, se desarrolla con las siguientes herramientas y bibliotecas:
+ 
+\begin{itemize}
+    \item \textbf{Qt Creator} como \ac{IDE}, con \textbf{Qt~6} para la interfaz gráfica.
+    \item \textbf{OpenCV~4.5.5} para el procesamiento y conversión de los frames de imagen recibidos.
+    \item \textbf{FTD2XX API} (biblioteca oficial de FTDI) para la comunicación con el chip FT232H a través de USB.
+    \item \textbf{MinGW/GCC} como compilador C++ bajo Windows.
+\end{itemize}
+
+La primera versión de esta aplicación se desarrolló en Python, pero se abandonó por problemas de latencia de lectura que provocaban el desbordamiento de la \ac{FIFO} asíncrona de la FPGA; la justificación detallada de este cambio de lenguaje se recoge en el Capítulo~\ref{chap:software}.
+
+\section{Documentación}
+ 
+La presente memoria se redacta en \textbf{\LaTeX} con la distribución \textbf{MiKTeX~26.2}. Los diagramas de bloques, diagramas de estados y figuras de arquitectura se crean con \textbf{draw.io}. La documentación del código VHDL y del \ac{SW} de PC se genera con \textbf{Doxygen}, a partir de los comentarios estructurados del propio código.
+
+\end{document}

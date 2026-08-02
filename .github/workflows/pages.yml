@@ -1,0 +1,61 @@
+name: Deploy docs to Pages
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  packages: read
+  pages: write
+  id-token: write
+
+jobs:
+  prep:
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.repo.outputs.image }}
+    steps:
+      - name: Nombre de imagen en minúsculas
+        id: repo
+        run: echo "image=ghcr.io/carlosmgj/fwframeworktools/fpga-doc-tools:latest" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: prep
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ needs.prep.outputs.image }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar acceso SSH al framework privado
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.FRAMEWORK_DEPLOY_KEY }}
+
+      - name: Descargar submódulo (framework)
+        env:
+          GIT_SSH_COMMAND: ssh -o StrictHostKeyChecking=accept-new
+        run: |
+          cd "$GITHUB_WORKSPACE"
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config submodule.10-Tools.url git@github.com:carlosmgj/FWFrameworkTools.git
+          git submodule update --init --recursive
+
+      - run: make -f 10-Tools/Makefile docs
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: 09-Build/00-Documentation/Doxygen/html
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

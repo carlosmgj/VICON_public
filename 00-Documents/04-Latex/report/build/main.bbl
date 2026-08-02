@@ -1,0 +1,70 @@
+\begin{thebibliography}{8}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[{FTDI Ltd.}(2015)]{ft232h_datasheet}
+{FTDI Ltd.}
+\newblock \emph{FT232H Single Channel Hi Speed USB to Multipurpose UART/FIFO
+  IC}.
+\newblock FTDI Ltd., 2015.
+\newblock URL
+  \url{https://ftdichip.com/wp-content/uploads/2020/07/DS_FT232H.pdf}.
+\newblock Datasheet Version 2.6.
+
+\bibitem[{Aptina Imaging Corporation}(2004)]{mt9v111_datasheet}
+{Aptina Imaging Corporation}.
+\newblock \emph{MT9V111: 1/4-Inch SOC VGA CMOS Active-Pixel Digital Image
+  Sensor}.
+\newblock Aptina Imaging Corporation, 2004.
+\newblock URL
+  \url{https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/992/MT9V111.pdf}.
+\newblock MT9V111 Datasheet, Rev. K.
+
+\bibitem[{Accellera Systems Initiative}(2020)]{uvm}
+{Accellera Systems Initiative}.
+\newblock \emph{IEEE Standard for Universal Verification Methodology (UVM)
+  Language Reference Manual}.
+\newblock IEEE / Accellera Systems Initiative, 2020.
+\newblock URL \url{https://accellera.org/downloads/standards/uvm}.
+\newblock IEEE Std 1800.2-2020.
+
+\bibitem[{OSVVM}(2023)]{osvvm}
+{OSVVM}.
+\newblock \emph{OSVVM: Open Source VHDL Verification Methodology}.
+\newblock OSVVM.org, 2023.
+\newblock URL \url{https://osvvm.org}.
+\newblock Documentación y librerías disponibles en el repositorio oficial.
+
+\bibitem[{cocotb contributors}(2024)]{cocotb}
+{cocotb contributors}.
+\newblock \emph{cocotb: A Coroutine Based Cosimulation Library for Writing VHDL
+  and Verilog Testbenches in Python}.
+\newblock cocotb, 2024.
+\newblock URL \url{https://www.cocotb.org}.
+\newblock Documentación oficial.
+
+\bibitem[{Bitvis AS}(2023)]{uvvm}
+{Bitvis AS}.
+\newblock {UVVM} --- {U}niversal {VHDL} {V}erification {M}ethodology, 2023.
+\newblock Retrieved from: \url{https://github.com/UVVM/UVVM}.
+
+\bibitem[{Digilent Inc.}(2016)]{basys3_manual}
+{Digilent Inc.}
+\newblock \emph{Basys 3 FPGA Board Reference Manual}.
+\newblock Digilent Inc., 2016.
+\newblock URL
+  \url{https://digilent.com/reference/programmable-logic/basys-3/reference-manual}.
+\newblock Basys 3 Reference Manual.
+
+\bibitem[{FTDI Ltd.}(2010)]{ft232h_an130}
+{FTDI Ltd.}
+\newblock \emph{AN\_130: FT232H Used In FT245 Synchronous FIFO Mode}.
+\newblock FTDI Ltd., 2010.
+\newblock URL
+  \url{https://ftdichip.com/wp-content/uploads/2020/08/AN_130_FT2232H_Used_In_FT245-Synchronous-FIFO-Mode.pdf}.
+\newblock Application Note AN\_130.
+
+\end{thebibliography}

@@ -1,0 +1,106 @@
+% !TEX root = ../main.tex
+\documentclass[../main.tex]{subfiles}%para poder compilar esta file sola
+% Chapter 1
+\begin{document}
+
+\chapter{Desarrollo}
+\label{chap:desarrollo} 
+
+\section{RTL Design}
+
+\subsection{I2C Controller}
+
+La interfaz de control del sensor MT9V111 incluye un bus I2C, que permite la escritura y lectura de los registros internos del sensor. Dentro de los distintos modos de operación, en este proyecto se implementan las funciones 
+de escritura y lectura de datos de 16 bits, que es el tamaño de los registros internos. Además, el sensor permite escritura/lectura iterativa en una sola transmisión y es el modo de comunicación que se usará. 
+\cite{mt9v111_datasheet} 
+
+\paragraph{Protocolo I2C MT9V111}
+
+\begin{itemize}
+    \item Start: El bit de start se da cuando la señal SDA baja mientras SCLK está en alto (Marcador 3 en \ref{fig:waveforms_16bits_rw_frames}).
+    \begin{figure}[htbp] 
+    \centering
+        %\subfloat[Trama completa]{\includegraphics[width=\textwidth]{gfx/waveforms/16bitswriting/16bitswriting.pdf}\label{fig:waveforms_16bitswriting_a}}
+        %\\
+        \subfloat[Envío de dirección de esclavo]{\fbox{\includegraphics[width=0.9\textwidth]{gfx/waveforms/16bitswriting/16bitswriting_addr.pdf}\label{fig:waveforms_16bitswriting_addr}}}
+        \\
+        \subfloat[Envío de dirección del registro \textbf{+ W}]{\fbox{\includegraphics[width=0.9\textwidth]{gfx/waveforms/16bitswriting/16bitswriting_reg_addr.pdf}\label{fig:waveforms_16bitswriting_reg_addr}}}
+        \\
+        \subfloat[Envío de start repetido y de dirección del resitro \textbf{+ R}]{\fbox{\includegraphics[width=0.9\textwidth]{gfx/waveforms/16bitsreading/16bitsreading_rstart.pdf}\label{fig:waveforms_16bitsreading_rstart}}}
+        \\
+        \subfloat[Envío de valor del registro: MSB \& LSB ]{\fbox{\includegraphics[width=\textwidth]{gfx/waveforms/16bitswriting/16bitswriting_reg_val.pdf}\label{fig:waveforms_16bitswriting_reg_val}}}
+    \caption{Tramas para Escritura y Lectura de 16 bits en el bus I2C del sensor MT9V111.} 
+    \label{fig:waveforms_16bits_rw_frames} 
+    \end{figure}
+\end{itemize}
+
+\begin{figure}[htbp] 
+    \centering
+    \includegraphics[width=0.6\textwidth]{gfx/waveforms/4phases_sclk.pdf}
+    \caption{Cronograma de las 4 fases de SCLK.} 
+    \label{fig:waveforms_4phases} 
+\end{figure}
+
+\todohint[caption={Figuras diagramas}, inline]{Explicar de forma detallada junto con los diagramas de drawio la secuencia de la FSM del I2C Controller.}
+
+
+\begin{table}[h]
+\centering
+\caption{Mapeo de pines PMOD entre las placas ZYBO Z7 y Basys 3.}
+\label{tab:pmod_pinout}
+\begin{tabular}{ccclcc}
+\rowcolor[HTML]{156082} 
+{\color[HTML]{FFFFFF} \textbf{\makecell{ZYBO Z7\\PMOD}}} & {\color[HTML]{FFFFFF} \textbf{\makecell{PMOD \\ PIN}}} & {\color[HTML]{FFFFFF} \textbf{\makecell{FPGA \\ PIN}}} & {\color[HTML]{FFFFFF} \textbf{SIGNAL}} & \multicolumn{1}{l}{\cellcolor[HTML]{156082}{\color[HTML]{FFFFFF} \textbf{\makecell{BASYS 3 \\ PMOD}}}} & \multicolumn{1}{l}{\cellcolor[HTML]{156082}{\color[HTML]{FFFFFF} \textbf{\makecell{FPGA  \\PIN2}}}} \\
+
+\rowcolor[HTML]{C0E6F5} 
+JC                                             & 1                                        & V15                                      & RESETCAM                               & JXADC                                                                                    & J1                                                                                    \\
+JC                                             & 2                                        & W15                                      & datain{[}0{]}                          & JXADC                                                                                    & L2                                                                                    \\
+\rowcolor[HTML]{C0E6F5} 
+JC                                             & 3                                        & T11                                      & datain{[}2{]}                          & JXADC                                                                                    & J2                                                                                    \\
+JC                                             & 4                                        & T10                                      & datain{[}4{]}                          & JXADC                                                                                    & G2                                                                                    \\
+\rowcolor[HTML]{C0E6F5} 
+JC                                             & 5                                        &                                          & GND                                    & JXADC                                                                                    &                                                                                       \\
+JC                                             & 6                                        &                                          & VCC                                    & JXADC                                                                                    & \multicolumn{1}{l}{}                                                                  \\
+\rowcolor[HTML]{C0E6F5} 
+JC                                             & 7                                        & W14                                      &                                        & JXADC                                                                                    & H1                                                                                    \\
+JC                                             & 8                                        & Y14                                      & datain{[}1{]}                          & JXADC                                                                                    & K2                                                                                    \\
+\rowcolor[HTML]{C0E6F5} 
+JC                                             & 9                                        & T12                                      & datain{[}3{]}                          & JXADC                                                                                    & H1                                                                                    \\
+JC                                             & 10                                       & U12                                      & datain{[}5{]}                          & JXADC                                                                                    & G3                                                                                    \\
+\rowcolor[HTML]{C0E6F5} 
+JC                                             & 11                                       &                                          & GND                                    & JXADC                                                                                    & \multicolumn{1}{l}{\cellcolor[HTML]{C0E6F5}}                                          \\
+JC                                             & 12                                       &                                          & VCC                                    & JXADC                                                                                    & \multicolumn{1}{l}{}                                                                  \\
+\rowcolor[HTML]{C0E6F5} 
+JD                                             & 1                                        & T14                                      & datain{[}6{]}                          & JA                                                                                       & J3                                                                                    \\
+JD                                             & 2                                        & T15                                      & xclk                                   & JA                                                                                       & L3                                                                                    \\
+\rowcolor[HTML]{C0E6F5} 
+JD                                             & 3                                        & P14                                      & href                                   & JA                                                                                       & M2                                                                                    \\
+JD                                             & 4                                        & R14                                      & iic\_0\_sda\_io                        & JA                                                                                       & N2                                                                                    \\
+\rowcolor[HTML]{C0E6F5} 
+JD                                             & 5                                        &                                          & GND                                    & JA                                                                                       & \multicolumn{1}{l}{\cellcolor[HTML]{C0E6F5}}                                          \\
+JD                                             & 6                                        &                                          & VCC                                    & JA                                                                                       & \multicolumn{1}{l}{}                                                                  \\
+\rowcolor[HTML]{C0E6F5} 
+JD                                             & 7                                        & U14                                      & pclk                                   & JA                                                                                       & K3                                                                                    \\
+JD                                             & 8                                        & U15                                      & datain{[}7{]}                          & JA                                                                                       & M3                                                                                    \\
+\rowcolor[HTML]{C0E6F5} 
+JD                                             & 9                                        & V17                                      & vsync                                  & JA                                                                                       & M1                                                                                    \\
+JD                                             & 10                                       & V18                                      & iic\_0\_scl\_io                        & JA                                                                                       & N1                                                                                    \\
+\rowcolor[HTML]{C0E6F5} 
+JD                                             & 11                                       &                                          & GND                                    & JA                                                                                       & \multicolumn{1}{l}{\cellcolor[HTML]{C0E6F5}}                                          \\
+JD                                             & 12                                       &                                          & VCC                                    & JA                                                                                       & \multicolumn{1}{l}{}                                                                 
+\end{tabular}
+\end{table}
+
+
+
+\begin{figure}[htbp] 
+    \centering
+    \includegraphics[width=\textwidth]{gfx/camera_connection.pdf}
+    \caption{Conexión del sensor CMOS a la Basys 3.} 
+    \label{fig:camera_connection} 
+\end{figure}
+
+
+\end{document}
+
+

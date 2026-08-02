@@ -1,0 +1,5 @@
+Este documento ha sido generado eliminando secciones de la memoria final. Los índices, números de secciones, tablas, Figuras etc variarán según se vayan introduciendo los capítulos adicionales. Así mismo, los acrónimos que no aparecen con hipervínculo es porque pertenecen a secciones no incluidas. 
+
+Las referencias a otras secciones o capítulos que aparecen rotas (??), se deben a esta razón.
+
+Los diagramas de arquitectura incluidos han sido generado con un enfoque más cercano al diseño de VHDL que de diagramas con relaciones de SysML. Aun así, las relaciones entre componentes que describo en el texto se corresponden con las que define SysML. La que hay entre el módulo TOP y sus submódulos es una composición, porque el ciclo de vida de estos está ligado al del diseño sintetizado: fuera del TOP no existen. Las IPs del catálogo del fabricante, en cambio, mantienen una relación de agregación, ya que existen por sí mismas con independencia del proyecto. Y entre módulos como el procesador de comandos y el i2c_controller la relación es de dependencia, porque el primero usa los servicios del segundo sin llegar a contenerlo.

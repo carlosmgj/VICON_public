@@ -1,0 +1,42 @@
+% Abstract
+
+\pdfbookmark[1]{Resumen}{Resumen} % Bookmark name visible in a PDF viewer
+
+% \begingroup
+% \let\clearpage\relax
+% \let\cleardoublepage\relax
+% \let\cleardoublepage\relax
+
+
+
+
+\chapter*{Resumen} % Abstract name
+
+Este trabajo presenta el diseño, implementación y verificación de VICON, un sistema de adquisición y transmisión de imagen en tiempo 
+real basado en FPGA. El sistema integra el sensor de imagen CMOS MT9V111 con la plataforma Basys~3 (Xilinx Artix-7) y transmite el flujo de vídeo hacia un PC mediante 
+el chip FT232H de FTDI operando en modo \textit{Synchronous FIFO} sobre un enlace de 60~MHz.
+El diseño hardware, desarrollado íntegramente en VHDL, comprende un controlador I2C para la configuración del sensor, un módulo de captura de trama con gestión 
+de marcadores de protocolo, un controlador de alta velocidad para el FT232H con arquitectura de doble proceso para TX y RX, y un procesador de comandos con 
+sincronización entre dominios de reloj (CDC). La verificación se realiza mediante simulación y con pruebas en Hardware, 
+en la primera empleando agentes para el sensor I2C y para el chip FT232H. El software de visualización, desarrollado en C++ con Qt y OpenCV, recibe el flujo de imagen y permite enviar comandos de control a la FPGA.
+El sistema completo ha sido validado sobre hardware real, demostrando la transmisión de imagen en escala de grises a resolución VGA (640$\times$480) y la correcta ejecución de todos los comandos de control.
+
+% \par\vfill\pagebreak
+
+
+\pdfbookmark[1]{Abstract}{Abstract} % Bookmark name visible in a PDF viewer
+
+\chapter*{Abstract} % Abstract name
+
+This work presents the design, implementation and verification of VICON, a real-time image acquisition and transmission system based on FPGA. The system integrates the CMOS image sensor MT9V111 with the Basys~3 platform (Xilinx Artix-7) and transmits the video stream to a PC through the FTDI FT232H chip, operating in \textit{Synchronous FIFO} mode over a 60~MHz link. The hardware design, developed entirely in VHDL, comprises an I2C controller for sensor configuration, a frame capture module with protocol marker handling, a high-speed controller for the FT232H featuring a dual-process architecture for TX and RX, and a command processor with clock domain crossing (CDC) synchronisation. Verification is carried out through simulation and hardware testing; the former employs UVVM-based agents for both the I2C sensor and the FT232H chip. The visualisation software, developed in C++ with Qt and OpenCV, receives the image stream and allows control commands to be sent to the FPGA. The complete system has been validated on real hardware, demonstrating the transmission of grayscale images at VGA resolution (640$\times$480) and the correct execution of all control commands.
+
+
+% \endgroup
+\providecommand{\keywords}[1]
+{
+	\small	
+	\textbf{\textit{Keywords---}} #1
+
+}			
+
+\vfill
