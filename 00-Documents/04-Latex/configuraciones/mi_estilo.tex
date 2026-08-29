@@ -1,0 +1,70 @@
+% --- PAQUETES DE FORMATO Y LENGUAJE ---
+\usepackage[utf8]{inputenc}
+\usepackage[spanish, es-tabla]{babel} % Configuración para español
+\usepackage[T1]{fontenc}
+\usepackage{lmodern} % Fuente legible y profesional
+
+% --- GEOMETRÍA DE PÁGINA (Ajustado a TFM estándar) ---
+\usepackage[a4paper, top=3cm, bottom=3cm, left=3.5cm, right=2.5cm]{geometry}
+\usepackage{fancyhdr} % Para encabezados y pies de página
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small \leftmark} % Nombre del capítulo a la izquierda
+\fancyhead[R]{\small \thepage}  % Número de página a la derecha
+\renewcommand{\headrulewidth}{0.4pt} % Línea decorativa
+
+% --- COLORES Y ENLACES ---
+\usepackage[table]{xcolor}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    citecolor=blue,
+}
+
+% --- GRÁFICOS Y TABLAS ---
+\usepackage{graphicx}
+\usepackage{booktabs} % Para tablas estilo profesional (sin líneas verticales)
+\usepackage{caption}
+\captionsetup{font=small, labelfont=bf} % Etiquetas de figuras en negrita
+
+% --- CONFIGURACIÓN DE SECCIONES (Estilo Romano como tu PDF) ---
+% Esto hace que los capítulos se vean como "SECCIÓN I", "SECCIÓN II", etc.
+\usepackage{titlesec}
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries\centering}
+  {\chaptertitlename\ \thechapter}
+  {20pt}
+  {\Huge}
+\renewcommand{\thechapter}{\Roman{chapter}} % Cambia números 1, 2... por I, II...
+
+% --- CONFIGURACIÓN DE CÓDIGO (VHDL para VICON) ---
+\usepackage{listings}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+
+\lstdefinelanguage{VHDL}{
+   morekeywords={library,use,all,entity,is,port,in,out,end,architecture,of,begin,process,if,then,else,elsif,case,when,signal,variable,type,range,array,component,generic,map},
+   morecomment=[l]--
+}
+
+\lstset{
+    language=VHDL,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{codegreen},
+    stringstyle=\color{codepurple},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=10pt,
+    backgroundcolor=\color{gray!5},
+    showspaces=false,
+    showstringspaces=false,
+    frame=single,           % Recuadro alrededor del código
+    rulecolor=\color{black},
+    breaklines=true,        % Corta líneas largas automáticamente
+    captionpos=b            % Título del código abajo
+}

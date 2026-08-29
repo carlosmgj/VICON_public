@@ -1,0 +1,219 @@
+% ============================================================
+%   classicthesis-config.tex
+%   Configuración del paquete classicthesis
+% ============================================================
+
+\PassOptionsToPackage{eulerchapternumbers,listings,pdfspacing,subfig,beramono,eulermath,dottedtoc}{classicthesis}
+
+% ------------------------------------------------------------
+%   INFORMACIÓN DEL DOCUMENTO
+% ------------------------------------------------------------
+
+\newcommand{\myTitle}{VICON: Sistema de Visión configurable\xspace}
+\newcommand{\mySubtitle}{\xspace}
+\newcommand{\myName}{Carlos Manuel Gómez Jiménez\xspace}
+\newcommand{\mySupervisor}{Martín González García\xspace}
+\newcommand{\myDepartment}{Departamento de Ingeniería Informática y de Sistemas\xspace}
+\newcommand{\myUni}{Universidad de Málaga\xspace}
+\newcommand{\myLocation}{Málaga\xspace}
+\newcommand{\myTime}{Septiembre 2026\xspace}
+\newcommand{\myVersion}{version 1.0\xspace}
+
+% ------------------------------------------------------------
+%   COMANDOS ÚTILES
+% ------------------------------------------------------------
+
+\newcommand{\ie}{i.\,e.}
+\newcommand{\Ie}{I.\,e.}
+\newcommand{\eg}{e.\,g.}
+\newcommand{\Eg}{E.\,g.}
+
+\newcounter{dummy} % Necesario para hipervínculos correctos (índice, bibliografía, etc.)
+
+% ------------------------------------------------------------
+%   PAQUETES BÁSICOS
+% ------------------------------------------------------------
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{xspace}
+
+\PassOptionsToPackage{spanish,es-lcroman,es-tabla}{babel}
+\usepackage{babel}
+
+\PassOptionsToPackage{square,numbers}{natbib}
+\usepackage{natbib}
+
+\PassOptionsToPackage{fleqn}{amsmath}
+\usepackage{amsmath}
+
+\PassOptionsToPackage{pdftex}{graphicx}
+\usepackage{graphicx}
+
+% Comando para limpiar hasta página izquierda
+\newcommand*\cleartoleftpage{%
+  \clearpage
+  \ifodd\value{page}\hbox{}\newpage\fi
+}
+
+% ------------------------------------------------------------
+%   TABLAS, FIGURAS Y CAPTIONS
+% ------------------------------------------------------------
+
+\usepackage{tabularx}
+\setlength{\extrarowheight}{3pt}
+\newcommand{\tableheadline}[1]{\multicolumn{1}{c}{\spacedlowsmallcaps{#1}}}
+\newcommand{\myfloatalign}{\centering}
+\usepackage{caption}
+\captionsetup{format=hang,font=small}
+\usepackage{subfig}
+\usepackage{floatrow}
+\floatsetup[table]{capposition=top}
+
+% ------------------------------------------------------------
+%   LISTINGS (CÓDIGO FUENTE)
+% ------------------------------------------------------------
+
+\usepackage{listings}
+\lstset{
+  language=[LaTeX]Tex,
+  keywordstyle=\color{RoyalBlue},
+  basicstyle=\small\ttfamily,
+  commentstyle=\color{Green}\ttfamily,
+  stringstyle=\rmfamily,
+  numbers=left,
+  numberstyle=\scriptsize,
+  stepnumber=5,
+  numbersep=8pt,
+  showstringspaces=false,
+  breaklines=true,
+  frame=single,
+  belowcaptionskip=.75\baselineskip
+}
+
+% ------------------------------------------------------------
+%   HIPERVÍNCULOS
+% ------------------------------------------------------------
+
+\PassOptionsToPackage{pdftex,hyperfootnotes=false,pdfpagelabels,colorlinks=true,allcolors=black}{hyperref}
+\usepackage{hyperref}
+
+
+
+\pdfcompresslevel=9
+\pdfadjustspacing=1
+
+\hypersetup{
+  colorlinks=true,
+  pdfstartpage=1,
+  pdfstartview=FitV,
+  breaklinks=true,
+  pdfpagemode=UseOutlines,
+  pageanchor=true,
+  plainpages=false,
+  bookmarksnumbered,
+  bookmarksopen=true,
+  bookmarksopenlevel=1,
+  hypertexnames=true,
+  pdfhighlight=/O,
+  urlcolor=webbrown,
+  linkcolor=blue,
+  citecolor=black,
+  linktoc=all,
+  % Metadatos PDF
+  pdftitle={\myTitle},
+  pdfauthor={\textcopyright\ \myName, \myUni},
+  pdfcreator={pdfLaTeX},
+  pdfproducer={LaTeX with hyperref and classicthesis}
+}
+
+
+\PassOptionsToPackage{smaller}{acronym}
+\usepackage{acronym}
+\providecommand{\bflabel}{}
+\renewcommand{\bflabel}[1]{{#1}\hfill}
+
+
+% ------------------------------------------------------------
+%   AUTORREFERENCIAS (español)
+% ------------------------------------------------------------
+
+\makeatletter
+\@ifpackageloaded{babel}{
+  \addto\extrasspanish{
+    \renewcommand*{\figureautorefname}{Figura}
+    \renewcommand*{\tableautorefname}{Tabla}
+    \renewcommand*{\partautorefname}{Parte}
+    \renewcommand*{\chapterautorefname}{Capítulo}
+    \renewcommand*{\sectionautorefname}{Sección}
+    \renewcommand*{\subsectionautorefname}{Sección}
+    \renewcommand*{\subsubsectionautorefname}{Sección}
+  }
+  \providecommand{\subfigureautorefname}{\figureautorefname}
+}{\relax}
+\makeatother
+
+% ------------------------------------------------------------
+%   CLASSICTHESIS Y PAQUETES ADICIONALES
+% ------------------------------------------------------------
+
+\usepackage{classicthesis}
+\usepackage[textwidth=25mm]{todonotes}
+%\usepackage[textwidth=25mm,disable]{todonotes}
+\usepackage{subfiles}
+\usepackage{soulutf8}
+
+\newcommand{\todosolve}[2][]{\todo[color=green!50,size=\tiny,#1]{#2}}
+\newcommand{\todohint}[2][]{\todo[color=yellow!50,size=\tiny,#1]{#2}}
+
+\makeatletter
+\if@todonotes@disabled
+  \newcommand{\hlfix}[2]{#1}
+\else
+  \newcommand{\hlfix}[2]{\texthl{#1}\todo{#2}}
+\fi
+\makeatother
+
+\usepackage{pdfpages}
+\usepackage{lscape}
+\usepackage{multirow}
+\usepackage{siunitx}
+\usepackage{booktabs}
+\usepackage{hyphenat}
+\usepackage{placeins}
+\usepackage[numbered,framed]{matlab-prettifier}
+\usepackage{colortbl}
+\definecolor{LightCyan}{rgb}{0,0.5,1}
+\usepackage[official]{eurosym}
+\usepackage{bigstrut}
+\usepackage{adjustbox}
+\usepackage{gensymb}
+\usepackage[margin=2.5cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage{makecell}
+
+\usepackage[most]{tcolorbox}
+
+\tcbuselibrary{skins, breakable}
+ 
+\definecolor{reqblue}{HTML}{156082}
+ 
+\newtcolorbox{requisito}[2]{
+    enhanced,
+    breakable,
+    colback       = white,
+    colframe      = reqblue,
+    colbacktitle  = reqblue,
+    coltitle      = white,
+    fonttitle     = \bfseries\small,
+    title         = {#1 \hfill #2},
+    left          = 4pt,
+    right         = 4pt,
+    top           = 2pt,
+    bottom        = 2pt,
+    boxrule       = 0.8pt,
+    arc           = 2pt,
+} 
+
+\usepackage{longtable}
+\usepackage{svg}
+\usepackage{placeins}

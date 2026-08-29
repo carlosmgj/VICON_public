@@ -1,0 +1,17 @@
+# Fuerza los finales de línea correctos independientemente de la
+# configuración de git (core.autocrlf) de quien clone este repo -- sin
+# esto, clonar/añadir el submódulo desde Git Bash / Windows convierte los
+# .sh a CRLF, rompiéndolos al ejecutarse en WSL/Linux.
+
+* text=auto eol=lf
+
+*.sh text eol=lf
+*.py text eol=lf
+*.conf text eol=lf
+*.example text eol=lf
+*.dox text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Los .bat SÍ son exclusivamente de Windows -- CRLF es lo correcto aquí.
+*.bat text eol=crlf

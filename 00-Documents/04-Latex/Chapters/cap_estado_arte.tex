@@ -1,0 +1,34 @@
+% !TEX root = ../main.tex
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+\chapter{Estado del arte}
+\label{chap:estado_del_arte}
+
+Este capítulo repasa el estado del arte de las principales tecnologías involucradas en el proyecto: los sistemas de visión artificial embebida, las interfaces de alta velocidad empleadas para la transmisión de vídeo hacia un PC, los sensores de imagen CMOS y las metodologías de verificación de hardware digital.
+
+\section{Sistemas de visión artificial embebida}
+
+Los sistemas de visión artificial embebida han evolucionado notablemente en la última década. Las soluciones basadas en microcontroladores, permiten capturar y procesar imágenes de baja resolución con latencias aceptables. Sin embargo, cuando se requiere el procesamiento de flujos de vídeo en tiempo real a resoluciones \ac{VGA} o superiores, las \ac{FPGA}s se presentan como la alternativa más adecuada gracias a su capacidad de procesar datos en paralelo y al acceso directo a los pines de entrada/salida sin la mediación de un sistema operativo.
+
+Entre los trabajos más representativos en este ámbito destaca el uso de plataformas Zynq de Xilinx, que combinan un procesador ARM con lógica programable y permiten implementar \textit{pipelines} de procesamiento de imagen con aceleración hardware. No obstante, para aplicaciones donde el objetivo principal es la adquisición y transmisión de imagen sin procesamiento local intensivo, una \ac{FPGA} pura sin parte de \ac{PS} como la Artix-7 ofrece menores costes y una complejidad de diseño más controlable.
+
+\section{Interfaces de alta velocidad hacia PC}
+
+La transmisión de flujos de imagen sin comprimir hacia un PC exige interfaces de alta velocidad. Las alternativas más comunes son USB~3.0, GigE Vision y PCIe. En el presente proyecto se utiliza, por requisito, la familia FT232H de FTDI (Módulo UM232H-B). Este chip ofrece un modo \textit{Synchronous FIFO} de 8 bits que permite alcanzar tasas de transferencia de hasta 40~MB/s sobre USB~2.0~\cite{ft232h_datasheet}, con una interfaz síncrona válida para su implementación en \ac{VHDL}.
+
+El modo \textit{Synchronous FIFO} del FT232H opera con un reloj de 60~MHz generado por el propio chip. La FPGA actúa como maestro del bus: para transmitir datos (FPGA$\rightarrow$PC) activa una señal y presenta el dato en el bus de datos; para recibir datos (PC$\rightarrow$FPGA) activa otra señal diferente para que el FT232H controle el bus y a continuación aserta otra señal para consumir los bytes disponibles.
+\section{Sensores de imagen CMOS}
+
+El sensor MT9V111 de ON~Semiconductor es un sensor CMOS \ac{VGA} (640$\times$480) que entrega datos en formato YCbCr~4:2:2. Dispone de una \textbf{interfaz} de configuración \textbf{I2C} de dos hilos y una interfaz de \textbf{datos} paralela de 8~bits con señales de sincronismo de trama (\texttt{FVALID}), línea (\texttt{LVALID}) y reloj de píxel (\texttt{PIXCLK})~\cite{mt9v111_datasheet}. 
+
+\section{Metodologías de verificación de hardware digital}
+
+
+La verificación funcional ha evolucionado desde los bancos de pruebas \textit{ad hoc} hacia metodologías estructuradas que promueven sobre todo la reutilización y la automatización. En el ámbito de SystemVerilog, la referencia en la industria es \ac{UVM}~\cite{uvm}, que ofrece un entorno de verificación orientado a objetos con generación de estímulos aleatorios restringidos y cobertura funcional. Sin embargo, requiere un simulador con soporte completo de SystemVerilog, lo que la aleja de los flujos basados en VHDL.
+
+Dentro del ecosistema VHDL han surgido varias alternativas. \ac{OSVVM}~\cite{osvvm} aporta \textit{constrained random}, cobertura funcional y modelos de \textit{scoreboard} sobre VHDL puro. cocotb~\cite{cocotb}, por su parte, permite escribir los bancos de pruebas en Python, separándolo del lenguaje de descripción de hardware. Frente a estas, \ac{UVVM}~\cite{uvvm} propone un enfoque estructurado y modular especialmente orientado a la verificación de interfaces: proporciona una biblioteca de utilidades (\texttt{uvvm\_util}) con funciones de \textit{logging}, gestión de alertas y comprobación de valores (checks), y un framework de \ac{VVC}s que abstrae cada agente de verificación y permite coordinarlos desde un secuenciador central.
+
+Para este trabajo se ha optado por \ac{UVVM} por ser una metodología nativa de VHDL —el lenguaje en el que se describe todo el diseño—, lo que evita introducir SystemVerilog en el flujo y mantener así un único lenguaje en \ac{RTL} y el banco de pruebas. Su modelo de \ac{VVC}s encaja a priori de forma natural con la verificación de las interfaces del sistema, y su biblioteca de comprobaciones y alertas facilita la trazabilidad frente a los requisitos especificados.
+
+\end{document}

@@ -1,0 +1,104 @@
+% !TEX root = ../main.tex
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+\chapter{Software de visualización PC}
+\label{chap:software}
+
+La aplicación \texttt{vicon\_view} es un programa de escritorio desarrollado en C++ con Qt~6 (interfaz gráfica) y OpenCV, este último para la detección de rostros. Se comunica con la FPGA a través del chip FT232H mediante la API oficial de FTDI (\texttt{FTD2XX}), recibiendo el flujo de imagen en escala de grises y permitiendo el envío de comandos de control. El proyecto se compila con CMake (\texttt{CMakeLists.txt}),para la generación automática de los ficheros de Qt a partir de \texttt{mainwindow.ui} y \texttt{resources.qrc}.
+
+La elección de C++ para el software de PC no fue casual o basada únicamente en el requisito, sino consecuencia directa de un problema detectado en una primera versión desarrollada en Python. Con Python, la recepción del vídeo fallaba de forma intermitente: la \ac{FIFO} asíncrona de la \ac{FPGA} se desbordaba (\texttt{overflow}) y se perdía el sincronismo de trama.
+
+El diagnóstico con ILA reveló que la causa no era el ancho de banda —el enlace FT232H ofrece hasta 40~MB/s— sino la \textbf{latencia del host} en la lectura del buffer. El flujo de imagen es un caudal continuo: mientras el PC no vacía el buffer del FT232H, la \ac{FPGA} sigue escribiendo en la \ac{FIFO} asíncrona, que tiene una capacidad limitada. Si el PC deja de leer durante un intervalo demasiado largo, la \ac{FIFO} se llena y se produce el desbordamiento.
+
+En Python, estos intervalos resultaban excesivos e impredecibles: se introducían pausas de varios milisegundos en la ejecución, durante las cuales no se leía del FT232H. Se midieron latencias de lectura del orden de $7$~ms, cuando la capacidad de la \ac{FIFO} solo permitía tolerar pausas de aproximadamente $2{,}6$~ms antes de desbordar. Es decir, las pausas superaban en más del doble el margen disponible.
+
+La migración a C++ resolvió el problema. Al ejecutar la recepción en un hilo dedicado con alta prioridad, las latencias de lectura se reducen notablemente, dentro del margen que permite la \ac{FIFO}. Esto permite mantener la máxima tasa de fotogramas sin necesidad de recurrir a soluciones como reducir los \ac{FPS} o sobredimensionar la \ac{FIFO}, y confirma que el cuello de botella residía por completo en el lado del PC, no en la \ac{FPGA}.
+
+\section{Arquitectura y concurrencia}
+\label{sec:arquitectura_sw}
+
+A diferencia de versiones anteriores basadas en una única llamada bloqueante a \texttt{FT\_Read} en el hilo principal (lo que llegaba a congelar la interfaz), la aplicación actual separa el trabajo en \textbf{tres hilos} independientes, comunicados con la \ac{GUI} exclusivamente mediante señales y \textit{slots} de Qt (nunca actualizando directamente un widget desde un hilo secundario):
+
+\begin{itemize}
+    \item \textbf{Hilo principal} (\texttt{QApplication::exec()}): ejecuta el bucle de eventos de Qt, gestiona los \textit{widgets} generados desde \texttt{mainwindow.ui} y actualiza la imagen, el indicador de FPS y el estado de conexión en los \textit{slots} \texttt{onFrameReady}, \texttt{onConnectionStatusChanged} y \texttt{onFacesDetected}.
+    \item \textbf{Hilo de captura} (\texttt{captureThreadFunc}): en Windows se eleva a prioridad \texttt{THREAD\_PRIORITY\_TIME\_CRITICAL}. Llama a \texttt{FT\_Read} de forma directa (sin mutex, ya que es el único hilo que lee del dispositivo), acumula los bytes recibidos, localiza el marcador de trama y emite la señal \texttt{frameReady(QImage, fps)} por cada fotograma completo.
+    \item \textbf{Hilo de detección de rostros} (\texttt{detectionThreadFunc}): coge el último fotograma disponible (compartido mediante \texttt{m\_latestFrame} protegido por \texttt{m\_latestFrameMutex}), lanza el clasificador Haar de OpenCV y emite la señal \texttt{facesDetected(QVector<QRect>, detFps)} con los rectángulos detectados.
+\end{itemize}
+
+La sincronización entre hilos se apoya en tres objetos distintos, cada una con un propósito concreto:
+\begin{itemize}
+    \item \texttt{m\_ftdiMutex}: protege únicamente las llamadas a \texttt{FT\_Write} (comandos salientes desde el hilo principal), que pueden solaparse en el tiempo con la lectura continua del hilo de captura sobre el mismo \textit{handle} FTDI.
+    \item \texttt{m\_latestFrameMutex}: protege el traspaso del último fotograma capturado desde el hilo de captura hacia el hilo de detección.
+    \item \texttt{m\_facesMutex}: protege la lista de rectángulos detectados, consumida por el hilo principal al pintar el fotograma.
+\end{itemize}
+
+Cuando no hay datos disponibles (buffer vacío en captura, o detección desactivada), ambos hilos secundarios recurren a una espera fija breve (\texttt{std::this\_thread::sleep\_for}, entre 1 y 30~ms según el caso) en lugar de una variable de condición; es una solución simple, aunque una futura revisión podría sustituirla por primitivas de sincronización basadas en eventos si se necesitara reducir aún más la latencia.
+
+\section{Interfaz gráfica}
+\label{sec:gui_software}
+
+La interfaz (\texttt{mainwindow.ui}) se organiza en dos columnas dentro de un \texttt{QHBoxLayout}, tal y como puede verse en la Figura~\ref{fig:GUI1} (Apéndice~\ref{ch:manual_usuario}):
+
+\begin{itemize}
+    \item \textbf{Columna izquierda}: la ventana de vídeo (\texttt{lblVideo}), con el indicador de \ac{FPS} de captura (\texttt{lblFpsRx}) y el estado de conexión (\texttt{lblStatus}, en verde si el FT232H está abierto en modo \textit{Sync FIFO} y en rojo si no).
+    \item \textbf{Columna derecha}, organizada en \texttt{QGroupBox} independientes: \textit{Cámara} (activar/desactivar captura y alternar entre sensor real e imagen sintética), \textit{Detección de rostros}, \textit{LEDs} (dos botones individuales), \textit{Configuración (I2C)} y \textit{Log de comandos}.
+\end{itemize}
+
+Dos botones adicionales (\textit{Enviar Comando RAW\ldots} y \textit{Enviar Comando I2C\ldots}) se añaden de forma \textbf{dinámica} al grupo de \textit{Configuración} desde el propio constructor de \texttt{MainWindow} (no están definidos en el \texttt{.ui}), y abren un \texttt{QInputDialog} para introducir el comando en texto libre.
+
+\section{Protocolo de recepción de imagen}
+\label{sec:protocolo_recepcion}
+
+La función \texttt{findMarker} busca en el flujo de bytes acumulado la secuencia \texttt{0xAA 0x55 0xAA 0x55} que marca el inicio de cada fotograma. Una vez localizado el marcador, se descartan los bytes previos y se extraen exactamente \texttt{kFrameBytes} = $640 \times 480 = 307\,200$ bytes de luminancia. A diferencia de reconstruir la imagen RGB duplicando el valor de luminancia en los tres canales (R=G=B=Y), la implementación actual usa directamente el formato nativo \texttt{QImage::Format\_Grayscale8}, evitando la copia y conversión adicional. Si el acumulador de bytes crece por encima de $4\times$ el tamaño de lectura (\texttt{kBufSize} = 65\,536~B) sin encontrar el marcador, se descarta todo el contenido salvo los 3 últimos bytes (para no perder un marcador que quede entre dos lecturas), limitando así el crecimiento de memoria ante una posible pérdida de sincronismo prolongada.
+
+El indicador de \ac{FPS} de captura (\texttt{lblFpsRx}) se calcula con una ventana deslizante de hasta 30 marcas de tiempo (\texttt{std::deque}) sobre los fotogramas efectivamente recibidos, no sobre los bytes leídos del USB.
+
+\section{Protocolo de comandos y control}
+\label{sec:protocolo_comandos}
+
+Todos los comandos comparten el mismo byte de sincronismo (\texttt{kCmdSync~=~0xCC}) y se serializan en tramas de 4 o 6 bytes mediante \texttt{sendCmd4}/\texttt{sendCmdI2C}, coherentes con el protocolo de \texttt{ftdi\_controller} descrito en la Sección~\ref{sec:ftdi_controller}. La Tabla~\ref{tab:comandos_sw} resume los identificadores de comando definidos en el código (\texttt{kCmdLed}, \texttt{kCmdBcd}, \texttt{kCmdI2c}, \texttt{kCmdCap}, \texttt{kCmdSrc}), que coinciden con los CMD~0x01–0x05 del \texttt{cmd\_processor} (Sección~\ref{sec:cmd_processor}).
+
+\begin{table}[H]
+\centering
+\caption{Comandos PC$\rightarrow$FPGA definidos en \texttt{mainwindow.cpp}.}
+\label{tab:comandos_sw}
+\begin{tabular}{>{\raggedright\arraybackslash}p{2.2cm}>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{8.3cm}}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Constante}} & {\color{white}\textbf{Valor}} & {\color{white}\textbf{Origen en la GUI}} \\
+\rowcolor[HTML]{C0E6F5}
+\texttt{kCmdCap} & 0x04 & Botón \textit{Deshabilitar/Habilitar cámara} (\texttt{onToggleCamera}). \\
+\texttt{kCmdSrc} & 0x05 & Botón \textit{Fuente: Real / Modo: Sintético} (\texttt{onToggleImageSource}). \\
+\rowcolor[HTML]{C0E6F5}
+\texttt{kCmdLed} & 0x01 & Botones \textit{LED 0}/\textit{LED 1} (\texttt{onLed0}/\texttt{onLed1}). \\
+\texttt{kCmdI2c} & 0x03 & Diálogo \textit{Enviar Comando I2C\ldots} (\texttt{onSendI2CCommand}), trama de 6 bytes con página, registro y dato. \\
+\rowcolor[HTML]{C0E6F5}
+\end{tabular}
+\end{table}
+
+Los botones \textit{LED~0}/\textit{LED~1} envían en el campo de datos una máscara combinada de 2 bits (\texttt{bit0}=estado de LED~0, \texttt{bit1}=estado de LED~1) mediante \texttt{kCmdLed}. Sin embargo, en el procesador de comandos actualmente se interpreta como un \textbf{pulso de conmutación} (\texttt{s\_led\_toggle\_r}) que alterna el LED de la FPGA, no como una escritura directa de una máscara de valor.
+
+Además de los comandos con botón propio, dos diálogos genéricos permiten enviar tramas arbitrarias sin recompilar la aplicación:
+\begin{itemize}
+    \item \textbf{Comando RAW} (\texttt{onSendRawCommand}): solicita una lista de bytes en hexadecimal o decimal separados por espacios y los transmite tal cual con \texttt{FT\_Write}, validando que cada valor esté en el rango de 8~bits.
+    \item \textbf{Comando I2C} (\texttt{onSendI2CCommand}): solicita página, dirección de registro y dato (p.~ej. \texttt{1 0x37 0x0080} para forzar los 30~fps del registro R55 descrito en la Sección~\ref{sec:top}), valida los rangos (página/registro de 8~bits, dato de 16~bits) y compone la trama de 6~bytes correspondiente. Esta es la forma utilizada en la Figura~\ref{fig:GUI2} del Apéndice~\ref{ch:manual_usuario}.
+\end{itemize}
+
+\section{Detección de rostros}
+\label{sec:deteccion_rostros}
+
+Al arrancar, \texttt{MainWindow} intenta cargar el clasificador Haar \texttt{haarcascade\_frontalface\_default.xml} desde el directorio del ejecutable (\texttt{QCoreApplication::applicationDirPath()}); si falla, la detección queda deshabilitada y el botón correspondiente lo indica en la barra de estado. Cuando está activa, el hilo de detección ejecuta \texttt{cv::CascadeClassifier::detectMultiScale} sobre el último fotograma en escala de grises (factor de escala 1.2, mínimo 4 vecinos, tamaño mínimo de detección $40\times40$~px) y los rectángulos resultantes se dibujan en rojo sobre el \texttt{QPixmap} mostrado, en el hilo principal, dentro de \texttt{onFrameReady}.
+
+\section{Gestión de errores y limitaciones}
+\label{sec:limitaciones_sw}
+
+El principal problema de la arquitectura original —el bloqueo de la interfaz gráfica mientras \texttt{FT\_Read} esperaba datos— queda resuelto en la versión actual al ejecutar la captura en su propio hilo y comunicar los resultados a la \ac{GUI} exclusivamente mediante señales de Qt, sin llamadas bloqueantes en el hilo principal. Las limitaciones que persisten son de menor importancia:
+
+
+\begin{itemize}
+    \item \texttt{CMakeLists.txt} fija \texttt{WIN32\_EXECUTABLE TRUE} en Windows, por lo que la aplicación no abre consola: cualquier traza de depuración enviada a \texttt{stdout}/\texttt{stderr} queda oculta.
+    \item Si \texttt{FT\_Open} falla al arrancar, la aplicación se limita a mostrar un mensaje único en la barra de estado y continúa sin conexión; no existe una lógica de reintento ni de reconexión en caliente si el cable USB se desconecta y se vuelve a conectar durante la ejecución.
+    \item Las esperas de los hilos de captura y detección cuando no hay datos disponibles usan temporizaciones fijas (\texttt{sleep\_for} de 1--30~ms) en lugar de variables de condición; funcional pero mejorable si se quisiera minimizar la latencia al máximo.
+\end{itemize}
+
+\end{document}

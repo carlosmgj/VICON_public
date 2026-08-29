@@ -1,0 +1,41 @@
+/*!
+\htmlonly
+<p style="color:gray;font-size:0.9em;">Documentation generated: <span id="bdate"></span></p>
+<script>
+document.getElementById('bdate').innerText = document.lastModified;
+</script>
+\endhtmlonly
+
+\tableofcontents
+
+\mainpage Portada
+ 
+\section sec_desc Descripción
+
+\image html system1.png "" width=50%
+
+Documentación autogenerada de VICON:Sistema de Visión Configurable, Trabajo de Fin del Máster de Sistemas Electrónicos para Entornos Inteligentes de la Universidad de Málaga. Dentro de ella podemos encontrar:
+
+- \ref page_navigablediagram "Diagrama de bloques interactivo": Permite visualizar el diseño desarrollado para la FPGA de forma gráfica. 
+
+- \ref page_hierarchy "Módulos de diseño VHDL": Incluyen también los módulos del banco de pruebas desarrollado.
+
+- \ref page_reports "Reportes" generados automáticamente. Implementados actualmente para verificar las capacidades de la auto documentación. Pendiente de configurar la guía de estilo.
+
+- [Archivos documentados del repositorio](files.html)
+ 
+\section sec_memoria Memoria
+
+<a href="main.pdf">Memoria de TFM</a> actualizada.
+
+\section sec_repo Repositorio
+
+Repositorio asociado: https://github.com/carlosmgj/VICON_public
+
+
+\section sec_author Autor
+ Carlos Manuel Gómez Jiménez
+
+
+
+*/

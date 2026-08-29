@@ -1,0 +1,121 @@
+--! Usaremos el **UM232H-B** ([Datasheet](https://www.mouser.es/datasheet/3/35/1/DS_UM232H_B.pdf)),
+--! que es una placa de desarrollo o módulo de evaluación de FTDI que monta el chip **TD232H** ([Datasheet](https://akizukidenshi.com/goodsaffix/ft232h.pdf)).
+--! 
+--!
+--! \section sec_ft245_mode MODO FT245 (FIFO)
+--! 
+--! Modo para enviar datos continuamente con una alta tasa de transferencia de datos.
+--! 
+--! ### Señales de Control
+--! | Señal         | Dirección  FTDI  | Dirección  FPGA  | Nombre                | Descripción   |
+--! | :---          | ---:             | ---:             | :---                  | :---          |
+--! | **CLKOUT**    | out    (]→)      | in     (→[)      | Clock Output          | Generado por el chip FTDI de forma continua, las señales se capturan en **flanco de subida**. |
+--! | **RXF#**      | out    (]→)      | in     (→[)      | Receive Buffer Full   | Indica si tiene datos guardados (0) o no hay datos (1) recibidos desde el PC. |
+--! | **TXE#**      | out    (]→)      | in     (→[)      | Transmit Buffer Empty | Indica si el buffer de transmisión tiene espacio (0) o no (1) para recibir datos desde la FPGA. |
+--! | **OE#**       | in     (→[)      | out    (]→)      | Output Enable         | Dueño del bus es el FTDI (0) para leer o es la FPGA (1) para escribir. |
+--! | **RD#**       | in     (→[)      | out    (]→)      | Read Enable           | Sincroniza la descarga de datos de FTDI a FPGA durante una lectura. |
+--! | **WR#**       | in     (→[)      | out    (]→)      | Write Enable          | Sincroniza la carga de datos desde la FPGA hacia el FTDI durante una escritura. |
+--! | **ADBUS**     | inout  (↔[)      | inout  (↔[)      | Data Bus              | Bus bidireccional de 8 bits. |
+--! 
+--! \warning <b> Note that Asynchronous FIFO mode must be selected in the EEPROM before selecting the Synchronous FIFO mode in software. </b> 
+--! Go to section \ref subsec_td232hmode
+--! 
+--! \subsection subsec_ft245_write [FT245 Synchronous FIFO Write Operation](https://akizukidenshi.com/goodsaffix/ft232h.pdf#page=28) 
+--! 
+--! A write operation can be started when TXE# is low (**Fig: marker 2**). WR# is brought low when the data is valid (**Fig: marker 4**). A burst 
+--! operation can be done on every clock providing TXE# is still low. The external system must monitor TXE# 
+--! and its own WR# to check that data has been accepted. Both TXE# and WR# must be low for data to be accepted
+--! 
+--! \htmlonly
+--! <div style="zoom: 1; text-align:center; overflow-x: auto; max-width: 100%;">
+--! <style>
+--! #syncFIFO2Write svg { width: 100% !important; height: auto !important; }
+--! </style>
+--! <div id="syncFIFO2Write">
+--! <script type="WaveDrom">
+--! { signal: [
+--!   { name: "CLKOUT : ACBUS[4]",  wave: "p.................", period: 1},
+--!   {},
+--!   { name: "TXE#   : ACBUS[1]",  wave: "1.0...............", },
+--!   { name: "OE#    : ACBUS[5]",  wave: "1.................", },
+--!   { name: "RD#    : ACBUS[2]",  wave: "1.................", },
+--!   { name: "ADBUS",              wave: "x...2.2.2.2.x.....", data: ["D0","D1","D2","D3"] },
+--!   { name: "WR#    : ACBUS[3]",  wave: "1...0.0.0.0.1.....", },
+--!   {},
+--!   { name: "Estado",             wave: "4.5.6.6.6.6.7.....", data: ["IDLE","WAIT_TXE","WRITE","WRITE","WRITE","WRITE","NEXT"] }
+--! ],
+--!   head:{ 
+--!     text: "FT232H Synchronous FIFO — Secuencia de escritura (FPGA → FTDI)",
+--!     tick: 0
+--!   },
+--!   config: { hscale: 2, skin: "narrow" }
+--! }
+--! </script>
+--! </div>
+--! </div>
+--! \endhtmlonly
+--! 
+--! 
+--! \subsection subsec_ft245_read [FT245 Synchronous FIFO Read Operation](https://akizukidenshi.com/goodsaffix/ft232h.pdf#page=28)
+--! 
+--! A read operation is started when the chip drives RXF# low (**Fig: marker 2**). The external system can then drive OE# low (**Fig: marker 4**)
+--! to turn the data bus drivers around before acknowledging the data with the RD# signal going low (**Fig: marker 5**). The 
+--! first data byte is on the bus after OE# is low (**Fig: wrong marker ??**). The external system can burst the data out of the chip by 
+--! keeping RD# low or it can insert wait states in the RD# signal. If there is more data to be read it will 
+--! change on the clock following RD# sampled low. Once all the data has been consumed, the chip will drive 
+--! RXF# high (**Fig: include marker??**). Any data that appears on the data bus, after RXF# is high, is invalid and should be ignored.
+--! 
+--! \htmlonly
+--! <div style="zoom: 1; text-align:center; overflow-x: auto; max-width: 100%;">
+--! <style>
+--! #syncFIFO2ReadExact svg { width: 100% !important; height: auto !important; }
+--! </style>
+--! <div id="syncFIFO2ReadExact">
+--! <script type="WaveDrom">
+--! { signal: [
+--!   { name: "CLKOUT : ACBUS[4]",  wave: "p...................", period: 1},
+--!   {},
+--!   { name: "RXF#   : ACBUS[0]",  wave: "1.0.................", },
+--!   { name: "OE#    : ACBUS[5]",  wave: "1...0...............", },
+--!   { name: "RD#    : ACBUS[2]",  wave: "1....0.0.0.0.1......", },
+--!   { name: "WR#    : ACBUS[3]",  wave: "1...................", },
+--!   { name: "ADBUS",              wave: "z.....2.2.2.2.z.....", data: ["D0","D1","D2","D3"] },
+--!   {},
+--!   { name: "Estado FPGA",         wave: "4.5.3.6.6.6.6.7.....", data: ["IDLE","EVAL_RXF","OE_ASSRT","READ","READ","READ","READ","NEXT"] }
+--! ],
+--!   head:{ 
+--!     text: "FT232H Synchronous FIFO — Secuencia de lectura (FTDI → FPGA)",
+--!     tick: 0
+--!   },
+--!   config: { hscale: 2, skin: "narrow" }
+--! }
+--! </script>
+--! </div>
+--! </div>
+--! \endhtmlonly
+--! 
+--! Todo opera en el dominio CLKOUT (60 MHz generado por el FTDI).
+--! 
+--! 
+--! \subsection subsec_td232hmode FT232H Mode Selection
+--! 
+--! The FT232H defaults to asynchronous serial interface (UART) mode of operation.  
+--! After a reset the required mode is determined by the contents of the external EEPROM which can be 
+--! programmed using FT_Prog.
+--! 
+--! The EEPROM contents determine if the FT232H device is configured as FT232 asynchronous serial 
+--! interface, FT245 FIFO interface, CPU-style FIFO interface, FT1248 or Fast Serial Interface.  
+--! Following a reset, the EEPROM is read and the FT232H configured for the selected mode. After device 
+--! enumeration, the FT_SetBitMode command (refer to [D2XX_Programmers_Guide](http://www.ftdichip.com/Documents/ProgramGuides/D2XX_Programmer%E2%80%99s_Guide(FT_000071).pdf))
+--! can be sent to the USB driver to switch the selected interface into other modes – asynchronous bit-bang, synchronous bit
+--! bang or MPSSE – if required. 
+--! 
+--! When in FT245 FIFO mode, the FT_SetBitMode command can be used to select Synchronous FIFO 
+--! (FT_SetBitMode = 0x40). Note that FT245 FIFO mode must be configured in the EEPROM before 
+--! selecting the Synchronous FIFO mode. 
+--! 
+--! The drive strength selection, slew rate and Schmitt input function can also be configured in the EEPROM.
+--! 
+--! The MPSSE can be configured directly using the D2XX commands. The D2XX_Programmers_Guide
+--! available from the FTDI website is. The application note AN_108 – Command Processor for MPSSE and MCU 
+--! Host Bus Emulation Modes gives further explanation and examples for the MPSSE. 

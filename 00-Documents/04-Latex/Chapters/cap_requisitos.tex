@@ -1,0 +1,260 @@
+% !TEX root = ../main.tex
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+\chapter{Requisitos y casos de uso}
+\label{chap:requisitos}
+
+En este capítulo se recogen los requisitos capturados para el proyecto \ac{VICON}, así como los casos de uso derivados de ellos, que sirven de referencia para las fases de diseño y verificación descritas en los capítulos posteriores.
+
+\section{Requisitos del sistema}
+\label{sec:requisitos}
+La Tabla \ref{tab:requisitos} resume el conjunto de requisitos capturados en conjunto con el cliente (el tutor en este caso) para nuestro proyecto. En la columna de prioridad, el valor “F” hace referencia a un requisito fundamental del proyecto y “D” a requisito deseable (requisito que se intentará cumplir). La Figura \ref{fig:requisitos} muestra las relaciones entre requisitos de forma gráfica.
+
+\begin{longtable}{llll}
+\caption{Requisitos del proyecto.}
+\label{tab:requisitos} \\
+
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Id}} & {\color{white}\textbf{Nombre}} & {\color{white}\textbf{Prioridad}} & {\color{white}\textbf{Precedencia}} \\
+\endfirsthead
+
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Id}} & {\color{white}\textbf{Nombre}} & {\color{white}\textbf{Prioridad}} & {\color{white}\textbf{Precedencia}} \\
+\endhead
+
+R1.1 & ConfigurarCamara & F & R8 \\
+\rowcolor[HTML]{C0E6F5}
+R1.2 & CapturarImagen & F & R1.1 \\
+R2.1 & TransmitirVideo & F & R1.2 \\
+\rowcolor[HTML]{C0E6F5}
+R2.2 & SincronizarFrames & F & R2.1 \\
+R3.1 & MostrarVideo & F & R2.1 \\
+\rowcolor[HTML]{C0E6F5}
+R3.2 & MostrarFPS & D & R3.1 \\
+R3.3 & DisposicionGUI & D & R3.1 \\
+\rowcolor[HTML]{C0E6F5}
+R3.4 & DetectarCaras & F & R3.1 \\
+R4 & RecibirComandos & D & R2.1 \\
+\rowcolor[HTML]{C0E6F5}
+R4.1 & EscribirRegistrosI2C & D & R4, R1.1 \\
+R4.2 & ActivarCaptura & D & R4, R1.2 \\
+\rowcolor[HTML]{C0E6F5}
+R5.1 & ResolucionImagenes & D & R1.2 \\
+R5.2 & ColorImagenes & D & R1.2 \\
+\rowcolor[HTML]{C0E6F5}
+R5.3 & TasaFotogramas & F & R2.1 \\
+R6 & TiempoReal & D & R3.1 \\
+\rowcolor[HTML]{C0E6F5}
+R7 & ProtocoloFTDI & D & R2.1 \\
+R8 & ConexionCamara & F & R9.2 \\
+\rowcolor[HTML]{C0E6F5}
+R9.1 & PlataformaProcesadora & F & \\
+R9.2 & PlataformaSensor & F & \\
+\rowcolor[HTML]{C0E6F5}
+R9.3 & PlataformaHost & D & \\
+R10.1 & FechaSolicitudPrimeraOrd & F & \\
+\rowcolor[HTML]{C0E6F5}
+R10.2 & FechaDefensaPrimeraOrd & F & R10.1 \\
+R10.3 & FechaSolicitudSegundaOrd & F & \\
+\rowcolor[HTML]{C0E6F5}
+R10.4 & FechaDefensaSegundaOrd & F & R10.3 \\
+R11.1 & LenguajeProgramacionGUI & F & \\
+\rowcolor[HTML]{C0E6F5}
+R11.2 & LenguajeProgramacionFPGA & F & \\
+\end{longtable}
+
+
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=1.1\textwidth]{gfx/cap_requisitos/PAPYRUSDI_CMGJ_VICON.png}
+    \caption{Diagrama general de requisitos.}
+    \label{fig:requisitos} 
+\end{figure}
+
+\subsection{Descripción de los requisitos funcionales}
+\label{subsec:req_funcionales}
+
+\begin{description}
+    \item[R1.1] --- \textbf{ConfigurarCamara}: El sistema configurará los registros de la cámara MT9V111 mediante el bus I2C durante el arranque.
+    \item[R1.2] --- \textbf{CapturarImagen} : El sistema capturará los fotogramas procedentes de la cámara MT9V111.
+    \item[R2.1] --- \textbf{TransmitirVideo} : El sistema transmitirá el vídeo capturado al Host (PC) a través del puerto USB mediante el módulo FT232H.
+    \item[R2.2] --- \textbf{SincronizarFrames} : El sistema insertará un marcador de inicio de fotograma en el flujo de datos para que el Host (PC) delimite cada imagen.
+    \item[R3.1] --- \textbf{MostrarVideo} : La interfaz gráfica del Host mostrará el vídeo recibido en una ventana en tiempo real.
+    \item[R3.2] --- \textbf{MostrarFPS} : La GUI del Host mostrará los FPS actuales.
+    \item[R3.3] --- \textbf{DisposicionGUI} : La GUI del Host estará formada por una ventana central donde se muestre el vídeo y botones laterales para las secciones de control.
+    \item[R3.4] --- \textbf{DetectarCaras} : La aplicación del Host detectará la cara presente en el vídeo recibido mediante OpenCV.
+    \item[R4]   --- \textbf{RecibirComandos} : El sistema recibirá comandos enviados desde el Host (PC) a través del puerto USB.
+    \item[R4.1] --- \textbf{EscribirRegistrosI2C} : El sistema escribirá en los registros de la cámara por I2C según el comando recibido del Host (PC).
+    \item[R4.2] --- \textbf{ActivarCaptura} : El sistema activará o desactivará la captura de vídeo según el comando recibido del Host (PC).
+\end{description}
+
+\subsection{Descripción de los requisitos no funcionales}
+\label{subsec:req_no_funcionales}
+
+\begin{description}
+    \item[R5.1] --- \textbf{ResolucionImagenes} : El vídeo transmitido tendrá una resolución mínima de 640$\times$480 píxeles (VGA).
+    \item[R5.2] --- \textbf{ColorImagenes} : El vídeo transmitido será en escala de grises.
+    \item[R5.3] --- \textbf{TasaFotogramas} : El sistema transmitirá al Host (PC) un mínimo de 10 fotogramas por segundo bajo condiciones de luz suficientes.
+    \item[R6] --- \textbf{TiempoReal} : El Host (PC) mostrará el vídeo de forma continua, sin acumular retardo creciente y sin almacenar la secuencia completa antes de mostrarla.
+    \item[R7] --- \textbf{ProtocoloFTDI} : El protocolo de comunicación con el módulo FT232H será FIFO Asíncrono, siendo deseable el modo FIFO Síncrono.
+    \item[R8] --- \textbf{ConexionCamara} : La cámara se insertará en los conectores Pmod JA y JXADC de la placa Basys~3.
+    \item[R9.1] --- \textbf{PlataformaProcesadora} : El sistema de procesamiento se basa en la placa Basys~3 con FPGA Artix-7 XC7A35T.
+    \item[R9.2] --- \textbf{PlataformaSensor} : El sensor de imágenes utilizado será el modelo MT9V111, conectado al sistema por medio de una PCB adaptadora de pines proporcionada por el cliente.
+    \item[R9.3] --- \textbf{PlataformaHost} : El Host (PC) tendrá como sistema operativo Windows~11 y un mínimo de 8~GB de RAM.
+    \item[R10.1] --- \textbf{FechaSolicitudPrimeraOrd} : El plazo de solicitud para la primera convocatoria Ordinaria es del 3/11/2025 al 30/06/2026.
+    \item[R10.2] --- \textbf{FechaDefensaPrimeraOrd} : El plazo de defensa para la primera convocatoria Ordinaria acaba a los 20 días hábiles desde la solicitud y nunca después del 17/07/2026.
+    \item[R10.3] --- \textbf{FechaSolicitudSegundaOrd} : El plazo de solicitud para la segunda convocatoria Ordinaria es del 27/08/2026 al 04/11/2026.
+    \item[R10.4] --- \textbf{FechaDefensaSegundaOrd} : El plazo de defensa para la segunda convocatoria Ordinaria acaba a los 20 días hábiles desde la solicitud y nunca después del 30/11/2026.
+    \item[R11.1] --- \textbf{LenguajeProgramacionGUI} : El lenguaje de programación utilizado para la captura de datos desde el Host y la creación de la GUI será preferiblemente C++.
+    \item[R11.2] --- \textbf{LenguajeProgramacionFPGA} : El sistema se describirá mediante el lenguaje de descripción de hardware VHDL.
+\end{description}
+
+\section{Casos de uso}
+\label{sec:casos_uso}
+Los actores externos con los que interactúa nuestro sistema se muestran en la Tabla \ref{tab:actores}. Las funcionalidades del sistema son, básicamente, capturar los fotogramas de la cámara, transmitirlos al ordenador para su visualización en tiempo real y su procesado, así como atender los comandos enviados desde el Host. El diagrama que muestra la relación del sistema (\ac{VICON}) con los actores descritos en la Tabla \ref{tab:actores} se muestra en la Figura \ref{fig:casos_uso}.
+
+\begin{table}[H]
+\centering
+\caption{Actores del sistema.}
+\label{tab:actores}
+\begin{tabular}{>{\raggedright\arraybackslash}p{3cm}>{\raggedright\arraybackslash}p{10cm}}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Nombre}} & {\color{white}\textbf{Descripción}} \\
+\rowcolor[HTML]{C0E6F5}
+Usuario & Persona que maneja la aplicación del Host: visualiza el vídeo, envía comandos y observa la detección de caras. \\
+Cámara & Cámara MT9V111 externa al sistema, que proporciona los fotogramas de vídeo y es configurada por I2C. \\
+\rowcolor[HTML]{C0E6F5}
+Tiempo & Representa la temporización que desencadena de forma periódica la adquisición y transmisión de cada fotograma. \\
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.5\textwidth]{gfx/cap_requisitos/casos_uso_VICON.png}
+    \caption{Diagrama de casos de uso.}
+    \label{fig:casos_uso}
+\end{figure}
+
+\subsection{Descripción textual de los casos de uso}
+\label{subsec:casos_uso_textual}
+
+\subsubsection{C1 --- Capturar un fotograma de la cámara}
+\begin{description}
+    \item[Contexto de uso:] A la frecuencia de captura, el sistema adquiere un fotograma de la cámara y extrae su información de luminancia para formar la imagen en escala de grises.
+    \item[Actor principal:] Tiempo.
+    \item[Participantes y Objetivos:] \hfill
+        
+        \begin{tabular}{>{\raggedright\arraybackslash}p{3cm}>{\raggedright\arraybackslash}p{10cm}}
+            \rowcolor[HTML]{156082}
+            {\color{white}\textbf{Participante}} & {\color{white}\textbf{Objetivo}} \\
+            \rowcolor[HTML]{C0E6F5}
+            Tiempo & Activar la adquisición de un nuevo fotograma. \\
+            Cámara & Proporcionar los datos del fotograma. \\
+        \end{tabular}
+
+    \item[Precondiciones:] Cámara conectada y configurada por I2C.
+    \item[Garantías mínimas:] El sistema dispone de un fotograma en escala de grises listo para transmitir.
+    \item[Escenario de éxito principal:] \hfill
+    \begin{itemize}
+        \item El Tiempo solicita al sistema la adquisición de un fotograma.
+        \item El sistema recibe del sensor las líneas del fotograma.
+        \item El sistema extrae la componente de luminancia de cada píxel.
+        \item El sistema comienza a almacenar el fotograma en escala de grises para su transmisión.
+    \end{itemize}
+    \item[Escenario secundario 1:] \hfill
+    \begin{itemize}
+        \item La cámara no entrega datos válidos (sincronismo o iluminación insuficiente).
+        \item El sistema descarta el fotograma y continúa con la siguiente adquisición.
+    \end{itemize}
+\end{description}
+
+\subsubsection{C2 --- Transmitir el vídeo al Host}
+\begin{description}
+    \item[Contexto de uso:] A la frecuencia de captura, el sistema envía al ordenador el fotograma adquirido a través del enlace USB, delimitando cada imagen con un marcador de inicio.
+    \item[Actor principal:] Tiempo.
+    \item[Participantes y Objetivos:] \hfill
+        
+    \begin{tabular}{>{\raggedright\arraybackslash}p{3cm}>{\raggedright\arraybackslash}p{10cm}}
+    \rowcolor[HTML]{156082}
+    {\color{white}\textbf{Participante}} & {\color{white}\textbf{Objetivo}} \\
+    \rowcolor[HTML]{C0E6F5}
+    Tiempo & Activar la transmisión del fotograma capturado. \\
+    \end{tabular}
+
+    \item[Precondiciones:] Existe un fotograma capturado y el enlace USB (FT232H) está operativo.
+    \item[Garantías mínimas:] El fotograma queda disponible en el Host correctamente delimitado.
+    \item[Escenario de éxito principal:] \hfill
+    \begin{itemize}
+        \item El Tiempo solicita al sistema la transmisión del fotograma.
+        \item El sistema inserta el marcador de inicio de fotograma en el flujo de datos.
+        \item El sistema envía los píxeles del fotograma al Host a través del FT232H.
+        \item El Host recibe el fotograma y lo delimita con el marcador.
+    \end{itemize}
+    \item[Escenario secundario 1:] \hfill
+    \begin{itemize}
+        \item Se produce una sobreescritura del búfer por falta de lectura del Host a tiempo.
+        \item El sistema descarta el fotograma para no acumular retardo.
+    \end{itemize}
+\end{description}
+
+\subsubsection{C3 --- Visualizar el vídeo en el Host}
+\begin{description}
+    \item[Contexto de uso:] El usuario observa en la aplicación del Host el vídeo recibido en tiempo real, junto con la tasa de fotogramas por segundo.
+    \item[Actor principal:] Usuario.
+    \item[Participantes y Objetivos:] \hfill
+        
+    \begin{tabular}{>{\raggedright\arraybackslash}p{3cm}>{\raggedright\arraybackslash}p{10cm}}
+    \rowcolor[HTML]{156082}
+    {\color{white}\textbf{Participante}} & {\color{white}\textbf{Objetivo}} \\
+    \rowcolor[HTML]{C0E6F5}
+    Usuario & Visualizar el vídeo recibido. \\
+    \end{tabular}
+
+    \item[Precondiciones:] La aplicación del Host está en ejecución y recibiendo fotogramas.
+    \item[Garantías mínimas:] El Host muestra el vídeo en una ventana y actualiza los FPS.
+    \item[Escenario de éxito principal:] \hfill
+    \begin{itemize}
+        \item El Host recibe un fotograma completo delimitado por su marcador.
+        \item El Host reconstruye la imagen en escala de grises.
+        \item El Host muestra la imagen en la ventana central de la GUI.
+        \item El Host actualiza el valor de FPS mostrado.
+    \end{itemize}
+    \item[Escenario secundario 1:] \hfill
+    \begin{itemize}
+        \item La aplicación detecta una cara en el fotograma mediante OpenCV.
+        \item El Host resalta la cara detectada sobre el vídeo.
+    \end{itemize}
+\end{description}
+
+\subsubsection{C4 --- Enviar un comando al sistema}
+\begin{description}
+    \item[Contexto de uso:] El usuario envía desde la aplicación del Host un comando al sistema (FPGA), bien para activar o desactivar la captura, bien para escribir un registro de la cámara por I2C.
+    \item[Actor principal:] Usuario.
+    \item[Participantes y Objetivos:] \hfill
+        
+    \begin{tabular}{>{\raggedright\arraybackslash}p{3cm}>{\raggedright\arraybackslash}p{10cm}}
+    \rowcolor[HTML]{156082}
+    {\color{white}\textbf{Participante}} & {\color{white}\textbf{Objetivo}} \\
+    \rowcolor[HTML]{C0E6F5}
+    Usuario & Enviar un comando de control al sistema. \\
+    Cámara & Aplicar la configuración recibida por I2C. \\
+    \end{tabular}
+
+    \item[Precondiciones:] El enlace USB está operativo y la cámara conectada.
+    \item[Garantías mínimas:] El sistema ejecuta el comando recibido.
+    \item[Escenario de éxito principal:] \hfill
+    \begin{itemize}
+        \item El usuario selecciona un comando en la GUI del Host.
+        \item El Host envía el comando al sistema por el enlace USB.
+        \item El sistema decodifica el comando recibido.
+        \item El sistema ejecuta la acción solicitada (activar/desactivar captura, encender/apagar LED, alternar entre imagen real y sintética o escribir un registro por I2C).
+    \end{itemize}
+    \item[Escenario secundario 1:] \hfill
+    \begin{itemize}
+        \item El comando recibido no es válido.
+        \item El sistema ignora el comando y mantiene su estado actual.
+    \end{itemize}
+\end{description}
+
+\end{document}

@@ -1,0 +1,389 @@
+% !TEX root = ../main.tex
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+\chapter{Verificación y validación}
+\label{chap:resultados}
+
+Este capítulo presenta el proceso de verificación y validación del sistema \ac{VICON} frente a los requisitos definidos en el Capítulo~\ref{chap:requisitos}, describiendo tanto las pruebas realizadas como el plan de validación seguido para confirmar el correcto funcionamiento del sistema completo.
+
+\section{Verificación de requisitos}
+\label{sec:verificacion}
+
+La verificación tiene por objeto comprobar que el sistema cumple el conjunto de requisitos especificados en el Capítulo~\ref{chap:requisitos}. Siguiendo un enfoque textual, para cada prueba se define el requisito o requisitos que verifica (total o parcialmente), el entorno en el que se ejecuta, la descripción de la prueba, la salida esperada y los posibles errores. Algunas pruebas verifican varios requisitos a la vez y otras se centran en uno solo.
+
+Antes de definir las pruebas, se describen los dos entornos en los que se ejecutan.
+
+\subsection{Entornos de prueba}
+\label{subsec:entornos}
+\begin{description}
+    \item[Entorno de simulación:] Se dispone de un \emph{Banco de pruebas} o \ac{TB} de sistema, desarrollado con \ac{UVVM} sobre QuestaSim, que verifica el diseño RTL completo sin necesidad de Hardware. El diseño se estimula con una imagen sintética y se conecta a un modelo del módulo FT232H. Este modelo es bidireccional, por lo que el \emph{testbench} verifica tanto el camino de datos de vídeo (FPGA~$\rightarrow$~PC) como la recepción de comandos (PC~$\rightarrow$~FPGA). Permite comprobar de forma controlada y reproducible la configuración por I2C, la captura, la sincronización de fotogramas, la transmisión y el procesado de comandos.
+    \item[Entorno de hardware real:] Se dispone del sistema desplegado sobre la placa Basys~3, con la cámara MT9V111 conectada mediante la PCB adaptadora y el módulo FT232H comunicando con el PC. Es el entorno en el que se validan la integración física, el rendimiento real (fps), la detección de caras con imagen real y el funcionamiento de la aplicación \texttt{vicon\_view}. La depuración sobre Hardware se apoya en el ILA de Vivado.
+\end{description}
+
+Las pruebas cuyo comportamiento puede reproducirse a nivel funcional se verifican primero en el entorno de simulación y, posteriormente, se confirman sobre hardware. Las pruebas que dependen de magnitudes físicas (rendimiento en fps, iluminación real, integración de la PCB) o de la aplicación del Host(PC) se verifican únicamente sobre hardware.
+
+\subsection{Descripción de las pruebas}
+\label{subsec:pruebas}
+
+\begin{table}[H]
+\centering
+\caption{Prueba P1.}
+\label{tab:prueba_p1}
+\begin{tabular}{>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{11cm}}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Campo}} & {\color{white}\textbf{Contenido}} \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Requisito/s} & R8, R9.1, R9.2, R2.1 \\
+\textbf{Entorno} & Hardware \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Prueba} & Con el sistema montado (cámara MT9V111 conectada a los conectores Pmod JA y JXADC mediante la PCB adaptadora), se programa el bitstream en la Basys~3 y se conecta el módulo FT232H al PC. Se ejecuta el \ac{SW} en el Host y se observa el enlace. Es una prueba de integración física que solo puede realizarse sobre Hardware. \\
+\textbf{Salida} & \begin{itemize}\setlength{\itemsep}{0pt}
+    \item El bitstream se programa sin errores en la FPGA.
+    \item \texttt{vicon\_view} abre el dispositivo FT232H y comienza a recibir datos.
+    \item El sensor entrega señal de imagen válida a través de la PCB adaptadora.
+\end{itemize} \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Errores} & \begin{itemize}\setlength{\itemsep}{0pt}
+    \item La FPGA no acepta el bitstream (recursos o pines mal asignados).
+    \item El PC no reconoce el FT232H o no recibe datos.
+    \item El sensor no entrega señal de imagen válida (conexión de la PCB defectuosa).
+\end{itemize} \\
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba P2.}
+\label{tab:prueba_p2}
+\begin{tabular}{>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{11cm}}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Campo}} & {\color{white}\textbf{Contenido}} \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Requisito/s} & R1.1, R8 \\
+\textbf{Entorno} & Simulación y hardware \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Prueba} & Se ejecutan las transacciones I2C de configuración de la cámara durante el arranque. En simulación se comprueban sobre el \emph{testbench} de sistema (respuesta del modelo del sensor); en hardware se pueden observar con el ILA de Vivado o con un analizador lógico externo. \\
+\textbf{Salida} & \begin{itemize}\setlength{\itemsep}{0pt}
+    \item Las transacciones I2C de configuración se completan con ACK del sensor en simulación.
+    \item En hardware, el ILA muestra las mismas transacciones sobre el bus I2C real.
+\end{itemize} \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Errores} & \begin{itemize}\setlength{\itemsep}{0pt}
+    \item Ausencia de ACK del sensor (dirección o temporización incorrectas).
+    \item La secuencia de configuración difiere entre simulación y hardware.
+\end{itemize} \\
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba P3.}
+\label{tab:prueba_p3}
+\begin{tabular}{>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{11cm}}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Campo}} & {\color{white}\textbf{Contenido}} \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Requisito/s} & R1.2, R2.1, R2.2, R5.1, R5.2 \\
+\textbf{Entorno} & Simulación y hardware \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Prueba} & Con la captura activada, se genera un fotograma y se recibe el flujo de vídeo. En simulación se estimula el diseño con la imagen sintética y se captura la salida a través del modelo del FT232H; en hardware se guarda un fotograma real (o la propia imagen sintética para comprobar pixeles de valor conocido) desde el \ac{SW}. Se comprueban dimensiones, formato y la correcta delimitación por el marcador de inicio. \\
+\textbf{Salida} & \begin{itemize}\setlength{\itemsep}{0pt}
+    \item Cada fotograma tiene una resolución de 640$\times$480 píxeles y se representa en escala de grises.
+    \item El marcador de inicio delimita correctamente cada imagen, tanto en simulación como en hardware.
+\end{itemize} \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Errores} & \begin{itemize}\setlength{\itemsep}{0pt}
+    \item Los fotogramas aparecen desplazados o \emph{rotos} (pérdida de sincronización del marcador). La imagen se "mueve" horizontal o verticalmente.
+    \item Resolución distinta de 640$\times$480 o aparición de componentes de color no esperadas.
+\end{itemize} \\
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba P4.}
+\label{tab:prueba_p4}
+\begin{tabular}{>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{11cm}}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Campo}} & {\color{white}\textbf{Contenido}} \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Requisito/s} & R4, R4.1, R4.2 \\
+\textbf{Entorno} & Simulación y hardware \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Prueba} & Se envían comandos desde el lado del PC (activar/desactivar captura y escritura de registro I2C). En simulación se inyectan a través del modelo bidireccional del FT232H en el \emph{testbench} de sistema; en hardware se envían desde el \ac{SW} y se verifican en la imagen y/o en el ILA. \\
+\textbf{Salida} & \begin{itemize}\setlength{\itemsep}{0pt}
+    \item La FPGA decodifica y ejecuta cada comando recibido.
+    \item La captura se activa/desactiva y la escritura de registro se aplica en la cámara, en simulación y hardware.
+\end{itemize} \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Errores} & \begin{itemize}\setlength{\itemsep}{0pt}
+    \item La FPGA no responde al comando o ejecuta una acción distinta.
+    \item El comando se pierde o se corrompe en el enlace (RX).
+\end{itemize} \\
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba P5.}
+\label{tab:prueba_p5}
+\begin{tabular}{>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{11cm}}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Campo}} & {\color{white}\textbf{Contenido}} \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Requisito/s} & R7 \\
+\textbf{Entorno} & Simulación y hardware \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Prueba} & Se verifica la comunicación con el FT232H en modo FIFO (Asíncrono como mínimo; Síncrono si es viable). En simulación, el modelo del FT232H comprueba el protocolo de lectura/escritura; en hardware se transmite vídeo de forma continuada comprobando la integridad del flujo. \\
+\textbf{Salida} & \begin{itemize}\setlength{\itemsep}{0pt}
+    \item El protocolo de transferencia con el FT232H funciona correctamente en el \emph{testbench} de sistema.
+    \item En hardware, el \ac{SW} recibe el flujo sin pérdida apreciable de fotogramas.
+\end{itemize} \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Errores} & \begin{itemize}\setlength{\itemsep}{0pt}
+    \item Fallo de protocolo (temporización de RD\#/WR\#/OE\#) en simulación.
+    \item Pérdida o corrupción de fotogramas por desbordamiento del búfer.
+\end{itemize} \\
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba P6.}
+\label{tab:prueba_p6}
+\begin{tabular}{>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{11cm}}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Campo}} & {\color{white}\textbf{Contenido}} \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Requisito/s} & R5.3, R6 \\
+\textbf{Entorno} & Hardware \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Prueba} & Se mide por software la tasa de fotogramas recibidos durante 10~segundos en condiciones nominales de iluminación, observando la estabilidad del retardo de visualización. El rendimiento real solo es representativo sobre hardware. \\
+\textbf{Salida} & \begin{itemize}\setlength{\itemsep}{0pt}
+    \item La tasa media es igual o superior a 10~fps.
+    \item La visualización se mantiene continua, sin acumular retardo creciente.
+\end{itemize} \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Errores} & \begin{itemize}\setlength{\itemsep}{0pt}
+    \item Tasa inferior a 10~fps de forma sostenida.
+    \item El retardo entre captura y visualización crece con el tiempo y deja de ser tiempo real.
+\end{itemize} \\
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba P7.}
+\label{tab:prueba_p7}
+\begin{tabular}{>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{11cm}}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Campo}} & {\color{white}\textbf{Contenido}} \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Requisito/s} & R3.1, R3.2, R3.3 \\
+\textbf{Entorno} & Hardware \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Prueba} & Se ejecuta la aplicación del Host y se observa la ventana de visualización durante la recepción de vídeo. \\
+\textbf{Salida} & \begin{itemize}\setlength{\itemsep}{0pt}
+    \item La GUI muestra el vídeo en una ventana central en tiempo real.
+    \item La GUI muestra el valor de FPS actualizado y presenta los botones laterales de control.
+\end{itemize} \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Errores} & \begin{itemize}\setlength{\itemsep}{0pt}
+    \item La ventana no se actualiza o muestra la imagen congelada.
+    \item El valor de FPS no se corresponde con la tasa real.
+\end{itemize} \\
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba P8.}
+\label{tab:prueba_p8}
+\begin{tabular}{>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{11cm}}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Campo}} & {\color{white}\textbf{Contenido}} \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Requisito/s} & R3.4 \\
+\textbf{Entorno} & Hardware \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Prueba} & Con una cara presente en el campo de visión de la cámara, se activa la detección en la aplicación del Host. Requiere imagen real, por lo que solo se verifica en hardware. \\
+\textbf{Salida} & \begin{itemize}\setlength{\itemsep}{0pt}
+    \item La aplicación resalta la cara detectada sobre el vídeo mediante OpenCV.
+\end{itemize} \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Errores} & \begin{itemize}\setlength{\itemsep}{0pt}
+    \item No se detecta la cara en condiciones nominales.
+    \item Se producen falsos positivos de forma continua.
+\end{itemize} \\
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba P9.}
+\label{tab:prueba_p9}
+\begin{tabular}{>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{11cm}}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Campo}} & {\color{white}\textbf{Contenido}} \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Requisito/s} & R9.3, R11.1, R11.2 \\
+\textbf{Entorno} & Hardware / entorno de desarrollo \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Prueba} & Se compila el código de \texttt{vicon\_view} (C++) y se sintetiza el diseño de la FPGA (VHDL), ejecutando la aplicación en el PC de trabajo. \\
+\textbf{Salida} & \begin{itemize}\setlength{\itemsep}{0pt}
+    \item El código C++ compila sin errores junto con OpenCV.
+    \item El diseño VHDL sintetiza correctamente en Vivado.
+    \item La aplicación se ejecuta sin errores en un PC con Windows~11 y 8~GB de RAM.
+\end{itemize} \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Errores} & \begin{itemize}\setlength{\itemsep}{0pt}
+    \item Errores de compilación o de síntesis.
+    \item La aplicación no arranca por falta de recursos o dependencias.
+\end{itemize} \\
+\end{tabular}
+\end{table}
+
+
+\section{Plan de validación}
+\label{sec:validacion}
+Mientras que la verificación (Sección~\ref{sec:verificacion}) comprueba que el sistema cumple los requisitos especificados, la validación comprueba que el sistema (VICON) resuelve la necesidad para la que fue diseñado. Para ello, las pruebas de validación se plantean sobre los casos de uso completos (Capítulo~\ref{chap:requisitos}), contemplando el sistema de extremo a extremo en condiciones de uso reales.
+
+La Tabla~\ref{tab:entregables} relaciona cada entregable del proyecto con las pruebas que lo validan.
+
+
+\begin{table}[H]
+\centering
+\caption{Entregables y pruebas de validación asociadas.}
+\label{tab:entregables}
+\begin{tabular}{>{\raggedright\arraybackslash}p{8.5cm}>{\raggedright\arraybackslash}p{4.5cm}}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Nombre del entregable}} & {\color{white}\textbf{Pruebas asociadas para su validación}} \\
+\rowcolor[HTML]{C0E6F5}
+Sistema de captura y transmisión sobre FPGA & V1, V2 \\
+Aplicación de visualización en el Host (C++ \ac{SW}) & V2, V3 \\
+\rowcolor[HTML]{C0E6F5}
+Control y configuración de la cámara por comandos & V4 \\
+Detección de caras (funcionalidad fundamental) & V5 \\
+\end{tabular}
+\end{table}
+
+
+\subsection{Pruebas del plan de validación}
+\label{subsec:pruebas_validacion}
+A continuación se describe cada prueba de validación indicando su descripción, prerrequisitos, pasos, resultado esperado y resultado obtenido.
+
+
+\begin{table}[H]
+\centering
+\caption{Prueba de validación V1.}
+\label{tab:val_v1}
+\begin{tabular}{>{\raggedright\arraybackslash}p{11.5cm}>{\raggedright\arraybackslash}p{1.5cm}}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Validación de la captura y transmisión de vídeo (C1 + C2)}} & {\color{white}\textbf{V1}} \\
+\rowcolor[HTML]{C0E6F5}
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Descripción:}\newline Se valida que el sistema captura el vídeo de la cámara y lo transmite íntegro al ordenador, cubriendo los casos de uso C1 (capturar fotograma) y C2 (transmitir vídeo) de extremo a extremo.} \\
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Prerrequisitos:}\newline Sistema montado sobre la Basys~3, cámara conectada por la PCB adaptadora, módulo FT232H enlazado al PC e iluminación nominal de la escena.} \\
+\rowcolor[HTML]{C0E6F5}
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Pasos:}\newline \begin{enumerate}\setlength{\itemsep}{0pt}
+    \item Programar el bitstream en la FPGA y conectar el FT232H al PC.
+    \item Activar la captura desde \texttt{vicon\_view}.
+    \item Observar la recepción continua de fotogramas durante varios segundos.
+    \item Guardar uno de los fotogramas recibidos y comprobar su resolución y formato.
+\end{enumerate}} \\
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Resultado esperado:}\newline El sistema entrega un flujo continuo de fotogramas de 640$\times$480 píxeles en escala de grises, correctamente delimitados, sin fotogramas rotos ni desplazados.} \\
+\rowcolor[HTML]{C0E6F5}
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Resultado obtenido:}\newline \textbf{SUPERADA.} Tal y como se recoge en la Sección~\ref{sec:top} (implementación) y en las pruebas en hardware del Capítulo~\ref{chap:implementacion}, \texttt{vicon\_view} recibe y muestra de forma continua el flujo de vídeo en escala de grises a resolución VGA (640$\times$480), sin fotogramas rotos ni desplazados. (Ver Figura~\ref{fig:GUI1})}
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba de validación V2.}
+\label{tab:val_v2}
+\begin{tabular}{>{\raggedright\arraybackslash}p{11.5cm}>{\raggedright\arraybackslash}p{1.5cm}}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Validación de la visualización en tiempo real (C3)}} & {\color{white}\textbf{V2}} \\
+\rowcolor[HTML]{C0E6F5}
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Descripción:}\newline Se valida que el usuario visualiza el vídeo en tiempo real en la aplicación del Host a la tasa requerida, cubriendo el caso de uso C3 (visualizar vídeo).} \\
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Prerrequisitos:}\newline Prueba V1 superada. Aplicación \ac{SW} en ejecución en un PC con Windows~11 y 8~GB de RAM.} \\
+\rowcolor[HTML]{C0E6F5}
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Pasos:}\newline \begin{enumerate}\setlength{\itemsep}{0pt}
+    \item Ejecutar aplicación con el sistema transmitiendo vídeo.
+    \item Mover un objeto delante de la cámara y observar la respuesta en la ventana.
+    \item Comprobar el valor de FPS mostrado durante al menos 10~segundos.
+\end{enumerate}} \\
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Resultado esperado:}\newline La ventana muestra el vídeo de forma fluida y sin retardo creciente, con una tasa igual o superior a 10~fps reflejada en el indicador de FPS.} \\
+\rowcolor[HTML]{C0E6F5}
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Resultado obtenido:}\newline \textbf{SUPERADA.} El sistema transmite a la tasa objetivo de 30~fps (\texttt{c\_MT9V111\_TARGET\_FPS}), muy por encima del mínimo de 10~fps exigido, y la Figura~\ref{fig:GUI1} (Apéndice~\ref{ch:manual_usuario}) muestra el indicador \textit{Cam FPS} activo en la interfaz. (Ver Figura~\ref{fig:GUI3})} \\
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba de validación V3.}
+\label{tab:val_v3}
+\begin{tabular}{>{\raggedright\arraybackslash}p{11.5cm}>{\raggedright\arraybackslash}p{1.5cm}}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Validación de la interfaz gráfica (disposición y control)}} & {\color{white}\textbf{V3}} \\
+\rowcolor[HTML]{C0E6F5}
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Descripción:}\newline Se valida que la interfaz gráfica presenta la disposición esperada (vídeo central y controles laterales) y resulta usable para el manejo del sistema.} \\
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Prerrequisitos:}\newline Aplicación en ejecución y recibiendo vídeo.} \\
+\rowcolor[HTML]{C0E6F5}
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Pasos:}\newline \begin{enumerate}\setlength{\itemsep}{0pt}
+    \item Abrir la aplicación y comprobar la disposición de la ventana.
+    \item Localizar el área de vídeo central y los botones laterales de control.
+    \item Interactuar con los controles disponibles.
+\end{enumerate}} \\
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Resultado esperado:}\newline La GUI presenta el vídeo en la zona central y los controles en los laterales, y el usuario puede manejar el sistema desde ella sin ambigüedad.} \\
+\rowcolor[HTML]{C0E6F5}
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Resultado obtenido:}\newline \textbf{SUPERADA.} La Figura~\ref{fig:GUI1} (Apéndice~\ref{ch:manual_usuario}) muestra la disposición final de \texttt{vicon\_view}: ventana de vídeo central y panel de control lateral (cámara, detección de rostros, LEDs, configuración I2C y log de comandos), acorde a los requisitos R3.3/R3.1.} \\
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba de validación V4.}
+\label{tab:val_v4}
+\begin{tabular}{>{\raggedright\arraybackslash}p{11.5cm}>{\raggedright\arraybackslash}p{1.5cm}}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Validación del control y configuración por comandos (C4)}} & {\color{white}\textbf{V4}} \\
+\rowcolor[HTML]{C0E6F5}
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Descripción:}\newline Se valida que el usuario puede controlar y configurar el sistema mediante comandos (activar/desactivar la captura y escribir registros de la cámara por I2C), cubriendo el caso de uso C4 (enviar comando).} \\
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Prerrequisitos:}\newline Sistema en funcionamiento y transmitiendo vídeo.} \\
+\rowcolor[HTML]{C0E6F5}
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Pasos:}\newline \begin{enumerate}\setlength{\itemsep}{0pt}
+    \item Enviar desde la \ac{GUI} el comando de desactivar y volver a activar la captura.
+    \item Enviar un comando de escritura de un registro de la cámara por I2C.
+    \item Observar el efecto en el vídeo (o mediante el ILA).
+\end{enumerate}} \\
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Resultado esperado:}\newline El sistema responde a cada comando: la captura se detiene y reanuda según lo solicitado, y la escritura del registro produce el efecto esperado en la imagen o se confirma con el ILA.} \\
+\rowcolor[HTML]{C0E6F5}
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Resultado obtenido:}\newline \textbf{SUPERADA.} Tras la corrección del protocolo FT232H (Sección~\ref{sec:ftdi_controller}), los cuatro comandos (\texttt{CAP}, \texttt{I2C}, \texttt{LED}, \texttt{SIM}) funcionan con un único envío, tal y como recoge la Sección~``Comandos de control'' del Capítulo~\ref{chap:implementacion}; la Figura~\ref{fig:GUI2} (Apéndice~\ref{ch:manual_usuario}) muestra un envío de comando I2C desde la GUI. \textbf{Nota:} los comandos I2C solo se atienden una vez el sistema ha terminado su configuración inicial (\texttt{ST\_FINISH}, véase la Sección~\ref{sec:cmd_processor}).} \\
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba de validación V5.}
+\label{tab:val_v5}
+\begin{tabular}{>{\raggedright\arraybackslash}p{11.5cm}>{\raggedright\arraybackslash}p{1.5cm}}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Validación de la detección de caras (C3 ampliado, deseable)}} & {\color{white}\textbf{V5}} \\
+\rowcolor[HTML]{C0E6F5}
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Descripción:}\newline Se valida la funcionalidad deseable de detección de caras sobre el vídeo recibido, como paso hacia el objetivo final del proyecto.} \\
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Prerrequisitos:}\newline Prueba V2 superada y detección activada en la aplicación del Host.} \\
+\rowcolor[HTML]{C0E6F5}
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Pasos:}\newline \begin{enumerate}\setlength{\itemsep}{0pt}
+    \item Situar una cara en el campo de visión de la cámara.
+    \item Activar la detección de caras en la \ac{GUI}.
+    \item Comprobar que la cara se resalta sobre el vídeo.
+\end{enumerate}} \\
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Resultado esperado:}\newline La aplicación detecta y resalta la cara presente en la escena mediante OpenCV, en condiciones de iluminación nominales.} \\
+\rowcolor[HTML]{C0E6F5}
+\multicolumn{2}{>{\raggedright\arraybackslash}p{13.5cm}}{\textbf{Resultado obtenido:}\newline \textbf{SUPERADA.} La Figura~\ref{fig:GUI3} (Apéndice~\ref{ch:manual_usuario}) muestra la detección y el resaltado correcto de múltiples caras presentadas al sensor real mediante una fotografía en una tablet, confirmando el funcionamiento de la detección basada en OpenCV sobre imagen real del MT9V111.} \\
+\end{tabular}
+\end{table}
+
+
+\end{document}

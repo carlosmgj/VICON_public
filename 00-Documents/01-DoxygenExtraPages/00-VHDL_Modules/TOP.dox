@@ -1,0 +1,103 @@
+--! Controlador I2C para comunicación con el sensor MT9V111.
+--! 
+--! \section sec_toplevel_waveform TOP LEVEL WAVEFORM:
+--! 
+--! \htmlonly
+--! <div style="zoom: 1; text-align:center; overflow-x: auto; max-width: 100%;">
+--! <style>
+--! #top_wavedrom svg { width: 1000% !important; height: auto !important; }
+--! </style>
+--! <div id="top_wavedrom">
+--! <script type="WaveDrom">
+--! {
+--! signal: [
+--! {name:'clk@100MHz'          ,  period: 1 , phase: 0.2  , wave: 'P..........................................................................'      },
+--! {name:'rst'          ,  period: 1 , phase: 1  , wave: '1....0......................................................................'     },
+--! {name:'greset'       ,  period: 1 , phase: 1  , wave: '1......0....................................................................'     },
+--! {                                                                                                               },
+--! {name:'mclk@100MHz'         ,  period: 1 , phase: 1  , wave: '0.......P.................................................'},
+--! {name:'Top_FSM'      ,  period: 1 , phase: 1  , wave: "u.......=.......=............===.................................................................................=.............=.............=.............=.............=.............=.............", data: ["CAM_RST_ASRT", "CAM_RESET_WAIT", "S1","S2", "PAGE_SEL_WAIT", "S4", "S5", "S6","S7", "S8"]          },
+--! {node: '.......a.......b............c'},
+--! {name:'i2c_wr_data'  ,              phase: 1  , wave: '=.............................==.......................', data: '0 4'                                                  },
+--! {name:'i2c_wr_push'  ,              phase: 1  , wave: '0.............................10.......................',                                                  },  
+--! {name:'i2c_wr'  ,                   phase: 1  , wave: '0..............................0.......................',                                                  },
+--! {name:'i2c_addr_reg'  ,             phase: 1  , wave: '=..............................==......................', data: '0 1'                                           },
+--! {name:'i2c_num_regs'  ,             phase: 1  , wave: '=..............................==......................', data: '1 1'                                         },
+--! {name:'i2c_start'  ,                phase: 1  , wave: '0..............................10......................', node: '...............................g'                                                },
+--! {},
+--! {name:'Phase_tick'   ,  period: 1 , phase: 1  , wave: '0.......0......10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10.....10',node: '....................................i'      },
+--! {node: '.......d......e......f'},
+--! {name:'I2C_FSM'      ,  period: 1 , phase: 1  , wave: "=...............................=....=......=......=......=......=......=......=......=......=......=......=......=......=......=......=......=......=......=......=......=......=......=......=......=......=......=......=......=......=......=......=......=......=......=......=......=......", data: ["IDLE", "START_0", "START_1", "START_2", "START_3" , "TX_0", "TX_1", "TX_2", "TX_3", "TX_0", "TX_1", "TX_2", "TX_3", "TX_0", "TX_1", "TX_2", "TX_3", "TX_0", "TX_1", "TX_2", "TX_3", "TX_0", "TX_1", "TX_2", "TX_3", "TX_0", "TX_1", "TX_2", "TX_3", "TX_0", "TX_1", "TX_2", "TX_3", "TX_0", "TX_1", "TX_2", "TX_3"] ,node: '................................h....j'         },
+--! {},
+--! {name:'scl_r'  ,             		phase: 1  , wave: '1....................................0......1.............0.............1.............0.............1.............0.............1.............0.............1.............0.............1.............0.............1.............0.............1.............0.............1.............0.............1.............0.............1.............0.............1.............0.............1.............0' , node: '...................................................l'},
+--!   {name:'sda_out_r'  ,             	phase: 1  , wave: '1..................................................0.............=...........................=...........................=...........................=...........................=...........................=...........................=...........................=...........................', node: '...................................................m',data: ["tx_byte(bit_cnt)" , "tx_byte(bit_cnt)", "tx_byte(bit_cnt)", "tx_byte(bit_cnt)", "tx_byte(bit_cnt)", "tx_byte(bit_cnt)", "tx_byte(bit_cnt)", "tx_byte(bit_cnt)"] },
+--! {name:'start_rd_mode'  ,            phase: 1  , wave: '0.................................................................................................................................................'},
+--! {name:'sda_oe'  ,             		phase: 1  , wave: '1..................................................................................................................................................'},
+--! {name:'bit_cnt'  ,                  phase: 1  , wave: '=.....................................................................................=...........................=...........................=...........................=...........................=...........................=...........................=...........................', data: '7 6 5 4 3 2 1 0 '                                                  },
+--! {name:'tx_byte'  ,                  phase: 1  , wave: '=.........................................................=..........................................................................................................................', data: '0 ADDR_DEV+0'                                                  },
+--! {},
+--! {name:'reg_cnt'  ,             		phase: 1  , wave: '0.....................................................................................1......................'},
+--! {                                                                                                                                               },
+--! {                                                                                                                                               },
+--! {},
+--! {name:'SCL'          ,  period: 4, phase: 1  , wave: '1.......01.................................................'      },
+--! {name:'SDA'          ,  period: 2 , phase: 1  , wave: 'x345x', data: 'a b c',                                                   },
+--! {name:'cam_mclk '    ,  period: 1 , phase: 1  , wave: 'P.................................................'      },
+--! {name:'cap_en'       ,  period: 2 , phase: 1  , wave: '0.............................................1....'     },
+--! {name:'ftdi_clk'     ,  period: 2 , phase: 0.5, wave: '0.................................P................'     },
+--! ],
+--!   edge: [
+--!   'a<->b RST_HOLD_CLKS', 'b<->c RESET_WAIT_CYCLES', 'd<->e CLKS/PHASE','e<->f CLKS/PHASE', 'g-~>h', 'i-~>j' , 'l-m START'
+--! ],
+--!  config:{
+--!    skin:'narrow',
+--!    hscale: 1
+--!  },
+--!  head:{
+--!    text:'WaveDrom example',
+--!    tick:0,
+--!    every:2
+--!  },
+--!  foot:{
+--!    text:'Figure 100'
+--!  },
+--! }
+--! </script>
+--! </div>
+--! </div>
+--! \endhtmlonly
+--! 
+--! Secuencia de inicialización al arrancar:
+--!   1. ST_CAM_RESET_ASSERT  : RESET_BAR='0' durante 1 ms
+--!   2. ST_CAM_RESET_WAIT    : RESET_BAR='1', espera 150 ms para que la cámara arranque
+--!   3. ST_PAGE_SEL_FILL     : Cargar WR FIFO con page register (R1 = 4 → Sensor Core)
+--!   4. ST_PAGE_SEL_START    : Escribir page register
+--!   5. ST_PAGE_SEL_WAIT     : Esperar done/error
+--!   6. ST_CHIPID_RD_START   : Lanzar lectura del registro 0xFF (Chip ID)
+--!   7. ST_CHIPID_RD_WAIT    : Esperar done/error
+--!   8. ST_CHIPID_RD_DRAIN   : Vaciar RD FIFO y verificar Chip ID
+--!   9. ST_FINISH            : LED(0)='1' — captura activa y streaming al PC
+--! 
+--! Flujo de datos de imagen:
+--!   MT9V111 (pixclk ~25 MHz)
+--!     └─ u_frame_capture  → solo canal Y (luminancia, escala de grises 640x480)
+--!          └─ u_async_fifo (FIFO asíncrona pixclk → ftdi_clk)
+--!               └─ u_ftdi_ctrl → FT232H → PC via USB
+--! 
+--! Interfaz FTDI FT232H — Modo Synchronous FIFO:
+--!   ADBUS[7:0] : datos de imagen hacia el PC (FPGA siempre conduce)
+--!   ACBUS[0]   : RXF# — '0' = FTDI tiene datos para FPGA (input, no usado aún)
+--!   ACBUS[1]   : TXE# — '0' = FTDI listo para recibir (input FPGA)
+--!   ACBUS[2]   : RD#  — '0' = pulso de lectura (output FPGA, no usado aún)
+--!   ACBUS[3]   : WR#  — '0' = pulso de escritura (output FPGA)
+--!   ACBUS[4]   : SIWU# — siempre alto
+--!   ACBUS[5]   : CLKOUT — reloj 60 MHz del FTDI (input FPGA)
+--!   ACBUS[6]   : OE# — siempre alto para escritura FPGA→FTDI
+--!   ACBUS[7]   : PWRSAV# — siempre alto
+--! 
+--! Notas de hardware (Basys 3):
+--!   - sclk y sdata son open-drain.
+--!   - cam_mclk se genera dividiendo mclk por 4 → 25 MHz.
+--!   - BTN(0) resetea el MMCM y reinicia toda la secuencia.
+--!   - La FSM del ftdi_controller opera en falling_edge(ftdi_clk) para
+--!     garantizar setup/hold time respecto al flanco de subida de CLKOUT.

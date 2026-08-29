@@ -1,0 +1,137 @@
+/*!
+\page page_hierarchy DESIGN HIERARCHY
+
+\brief Jerarquía de instanciaciones del proyecto VHDL.
+
+🟢 Módulo raíz (top-level) &nbsp;&nbsp; 🔵 Submódulo &nbsp;&nbsp; 🟡 Testbench
+
+Haz click en los nodos con ▶ para expandir/colapsar.
+
+\htmlonly
+
+<style>
+.hier-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  font-family: monospace;
+  font-size: 13px;
+  margin: 16px 0;
+}
+.hier-column {
+  min-width: 220px;
+  background: var(--page-background-color, #fff);
+  border: 1px solid var(--separator-color, #ddd);
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+.hier-tree, .subtree {
+  list-style: none;
+  padding-left: 16px;
+  margin: 2px 0;
+}
+.hier-tree {
+  padding-left: 0;
+}
+.toggle {
+  user-select: none;
+}
+.toggle.open > span {
+  /* flecha girada */
+}
+</style>
+<script>
+function toggleNode(el) {
+  var sub = el.nextElementSibling;
+  if (!sub) return;
+  var open = sub.style.display !== 'none';
+  sub.style.display = open ? 'none' : 'block';
+  el.innerHTML = el.innerHTML.replace(open ? '▼' : '▶', open ? '▶' : '▼');
+}
+</script>
+<div class="hier-container">
+
+<div class="hier-column">
+  <ul class="hier-tree">
+    <li>
+<span  style="color:#1a5c2a;cursor:default">◾ 🟢 <a href="ila__stub_8vhd.html">ila_0</a> <span style="font-size:0.85em;color:#888;">(ila_stub.vhd)</span></span>
+</li>
+
+  </ul>
+</div>
+<div class="hier-column">
+  <ul class="hier-tree">
+    <li>
+<span  style="color:#1a5c2a;cursor:default">◾ 🟢 <a href="ila__stub_8vhd.html">ila_2</a> <span style="font-size:0.85em;color:#888;">(ila_stub.vhd)</span></span>
+</li>
+
+  </ul>
+</div>
+<div class="hier-column">
+  <ul class="hier-tree">
+    <li>
+<span class="toggle" onclick="toggleNode(this)" style="color:#7a6000;cursor:pointer">▶ 🟡 <a href="testbench_8vhd.html">testbench</a> <span style="font-size:0.85em;color:#888;">(testbench.vhd)</span></span>
+<ul class="subtree" style="display:none;">
+<li>
+<span  style="color:#1a3a5c;cursor:default">◾ 🔵 <a href="clock__generator_8vhd.html">clk_reset_gen</a> <span style="font-size:0.85em;color:#888;">(clock_generator.vhd)</span></span>
+</li>
+<li>
+<span class="toggle" onclick="toggleNode(this)" style="color:#1a3a5c;cursor:pointer">▶ 🔵 <a href="_t_o_p_8vhd.html">TOP</a> <span style="font-size:0.85em;color:#888;">(TOP.vhd)</span></span>
+<ul class="subtree" style="display:none;">
+<li>
+<span  style="color:#1a3a5c;cursor:default">◾ 🔵 clk_wiz_0</span>
+</li>
+<li>
+<span  style="color:#1a3a5c;cursor:default">◾ 🔵 fifo_generator_0</span>
+</li>
+<li>
+<span  style="color:#1a3a5c;cursor:default">◾ 🔵 <a href="frame__capture_8vhd.html">frame_capture</a> <span style="font-size:0.85em;color:#888;">(frame_capture.vhd)</span></span>
+</li>
+<li>
+<span  style="color:#1a3a5c;cursor:default">◾ 🔵 <a href="ftdi__controller_8vhd.html">ftdi_controller</a> <span style="font-size:0.85em;color:#888;">(ftdi_controller.vhd)</span></span>
+</li>
+<li>
+<span  style="color:#1a3a5c;cursor:default">◾ 🔵 <a href="i2c__controller_8vhd.html">i2c_master</a> <span style="font-size:0.85em;color:#888;">(i2c_controller.vhd)</span></span>
+</li>
+<li>
+<span  style="color:#1a3a5c;cursor:default">◾ 🔵 <a href="mt9v111__image_8vhd.html">mt9v111_image</a> <span style="font-size:0.85em;color:#888;">(mt9v111_image.vhd)</span></span>
+</li>
+<li>
+<span  style="color:#1a3a5c;cursor:default">◾ 🔵 <a href="cmd__processor_8vhd.html">cmd_processor</a> <span style="font-size:0.85em;color:#888;">(cmd_processor.vhd)</span></span>
+</li>
+<li>
+<span  style="color:#1a3a5c;cursor:default">◾ 🔵 BUFG</span>
+</li>
+</ul>
+</li>
+<li>
+<span  style="color:#1a3a5c;cursor:default">◾ 🔵 <a href="mt9v111__i2c_8vhd.html">mt9v111_i2c</a> <span style="font-size:0.85em;color:#888;">(mt9v111_i2c.vhd)</span></span>
+</li>
+<li>
+<span  style="color:#1a3a5c;cursor:default">◾ 🔵 <a href="ftdi__agent_8vhd.html">ftdi_agent</a> <span style="font-size:0.85em;color:#888;">(ftdi_agent.vhd)</span></span>
+</li>
+</ul>
+</li>
+
+  </ul>
+</div>
+</div>
+\endhtmlonly
+
+\par Module List
+| Module | File | Instantiates |
+|--------|------|--------------|
+| \ref clk_reset_gen | `clock_generator.vhd` | — |
+| \ref cmd_processor | `cmd_processor.vhd` | — |
+| \ref frame_capture | `frame_capture.vhd` | — |
+| \ref ftdi_agent | `ftdi_agent.vhd` | — |
+| \ref ftdi_controller | `ftdi_controller.vhd` | — |
+| \ref i2c_master | `i2c_controller.vhd` | — |
+| \ref ila_0 | `ila_stub.vhd` | — |
+| \ref ila_2 | `ila_stub.vhd` | — |
+| \ref mt9v111_i2c | `mt9v111_i2c.vhd` | — |
+| \ref mt9v111_image | `mt9v111_image.vhd` | — |
+| \ref testbench | `testbench.vhd` | \ref clk_reset_gen, \ref TOP, \ref mt9v111_i2c, \ref ftdi_agent |
+| \ref TOP | `TOP.vhd` | clk_wiz_0, fifo_generator_0, \ref frame_capture, \ref ftdi_controller, \ref i2c_master, \ref mt9v111_image, \ref cmd_processor, BUFG |
+
+*/

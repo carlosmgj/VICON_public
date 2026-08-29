@@ -1,0 +1,44 @@
+% !TEX root = ../main.tex
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+\chapter{Conclusiones y trabajo futuro}
+\label{chap:conclusiones}
+
+En este capítulo se recogen las conclusiones extraídas del desarrollo del proyecto \ac{VICON}, valorando el grado de cumplimiento de los objetivos planteados en el Capítulo~\ref{chap:introduccion}, y se proponen las líneas de trabajo futuro que permitirían extender sus capacidades.
+
+\section{Conclusiones}
+
+En este trabajo se ha diseñado, implementado y verificado el sistema de adquisición y transmisión de imagen VICON sobre la FPGA Basys~3. Las principales contribuciones son:
+
+\begin{itemize}
+    \item \textbf{Protocolo FT232H correcto}: el proceso de depuración con ILA reveló que la corrección del protocolo \textit{Synchronous FIFO} requería: (a) separar los procesos TX y RX en flancos distintos (\textit{falling} y \textit{rising edge} respectivamente), (b) implementar la lectura en modo ráfaga continua con \texttt{RD\#} mantenido bajo durante todos los bytes, y (c) respetar el pipeline natural de un ciclo del FT232H. Este aprendizaje constituye uno de los resultados más valiosos del proyecto.
+    
+    \item \textbf{Gestión correcta de CDC}: se han identificado y resuelto todos los cruces de dominio de reloj del diseño, aplicando sincronizadores de doble flip-flop con atributo \texttt{ASYNC\_REG}, restricciones \texttt{set\_false\_path} y \texttt{set\_clock\_groups}, y logrando un cierre de timing con WNS~$= +1{,}565$~ns.
+    
+    \item \textbf{Diseño RTL completo en VHDL}: se han desarrollado desde cero los módulos de control I2C del sensor MT9V111, captura de trama, control del FT232H en modo \textit{Synchronous FIFO} y procesador de comandos, todos parametrizables mediante genéricos y paquetes de constantes.
+
+    \item \textbf{Banco de pruebas UVVM}: se ha desarrollado un banco de pruebas estructurado con el logger de UVVM, incluyendo agentes de simulación para el sensor I2C y el FT232H, monitores de FSM y frame, y un sniffer del bus I2C. La simulación alcanza el estado \texttt{ST\_FINISH} completando satisfactoriamente las 13 transacciones I2C de configuración del sensor.
+
+    \item \textbf{Sistema funcional en hardware}: el sistema completo opera correctamente en hardware real, transmitiendo imagen en escala de grises a 640$\times$480@30~fps y respondiendo a todos los comandos de control (\texttt{LED}, \texttt{BCD}, \texttt{I2C}, \texttt{CAP}, \texttt{SIM}) con un único envío.
+\end{itemize}
+
+\section{Trabajo futuro}
+
+Las líneas de trabajo futuro identificadas son:
+
+\begin{itemize}
+    \item \textbf{Soporte de color}: el sensor MT9V111 entrega datos en formato YCbCr~4:2:2. La extensión del sistema a imagen en color requeriría modificar \texttt{frame\_capture} para capturar todos los bytes (eliminando el descarte de crominancia), doblar el tamaño del buffer en \texttt{vicon\_view} y añadir un conversor YCbCr$\rightarrow$RGB en C++.
+
+    \item \textbf{Mejora del framework de verificación}: separar el \textit{test harness} del secuenciador de test mediante el genérico \texttt{GC\_TESTCASE}, permitiendo ejecutar múltiples casos de prueba sobre el mismo banco sin duplicar la infraestructura. Completar la interfaz del agente FTDI para inyección de comandos desde el secuenciador.
+
+    \item \textbf{Cobertura y trazabilidad}: añadir cobertura funcional (estados FSM alcanzados, comandos ejercitados) y matriz de trazabilidad requisitos$\leftrightarrow$test cases usando las facilidades de UVVM.
+
+    \item \textbf{Procesamiento en la FPGA}: explorar la implementación de operaciones de procesamiento de imagen básicas directamente en la FPGA (filtros, detección de bordes) aprovechando el paralelismo de la arquitectura y reduciendo la carga de transferencia hacia el PC.
+    
+    \item \textbf{Iluminación auxiliar para entornos de baja luminosidad}: el requisito R5.3 condiciona explícitamente la tasa de fotogramas a disponer de \emph{"condiciones de luz suficientes"}, y la fiabilidad de la detección de caras (R3.4) se degrada notablemente en escenas poco iluminadas. Una posible mejora consiste en incorporar un anillo de LEDs (blancos o IR, según queramos más calidad visual o más discreción) alrededor del sensor MT9V111, controlado desde la FPGA a través de un driver/MOSFET externo (la Basys~3 no puede alimentar directamente LEDs de potencia desde sus GPIO).Esta mejora sería complementaria al control de exposición automático, no un sustituto de él.
+
+    
+\end{itemize}
+
+\end{document}

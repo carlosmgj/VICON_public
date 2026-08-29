@@ -1,0 +1,141 @@
+% !TEX root = ../main.tex
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+\chapter{Implementación y resultados}
+\label{chap:implementacion}
+
+Este capítulo detalla el proceso de implementación del diseño sobre la Basys~3, incluyendo los resultados de síntesis e implementación en Vivado, las restricciones de temporización y de pines empleadas, el proceso de depuración en hardware apoyado en el \ac{ILA} y, finalmente, las pruebas realizadas sobre la placa física.
+\section{Síntesis e implementación en Vivado}
+
+El proyecto se sintetiza e implementa con Vivado~2020.2 sobre el dispositivo (target) XC7A35T-1CPG236C. 
+
+\subsection{Resultados de timing}
+\label{sec:resultados_timing}
+
+El análisis de tiempos tras la implementación (\texttt{report\_timing\_summary}) revela una violación de \textit{setup} localizada exclusivamente en la interfaz de salida hacia el FT232H, tal como resume la Tabla~\ref{tab:timing}. El resto del diseño (dominios \texttt{s\_mclk} y \texttt{mt\_pixclk\_i}, y las trayectorias de \textit{hold}) cierra sin violaciones.
+
+\begin{table}[H]
+\centering
+\caption{Resumen de \textit{timing} tras la implementación.}
+\label{tab:timing}
+\begin{tabular}{lrl}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Métrica}} & {\color{white}\textbf{Valor}} & {\color{white}\textbf{Resultado}} \\
+\rowcolor[HTML]{C0E6F5}
+WNS (\textit{Worst Negative Slack}) & $-9{,}766$~ns & VIOLADO \\
+TNS (\textit{Total Negative Slack}) & $-94{,}162$~ns & VIOLADO \\
+\rowcolor[HTML]{C0E6F5}
+Endpoints con violación & $21$ / $6349$ & --- \\
+WHS (\textit{Worst Hold Slack}) & $+0{,}056$~ns & OK \\
+\rowcolor[HTML]{C0E6F5}
+WPWS (\textit{Worst Pulse Width Slack}) & $+3{,}000$~ns & OK \\
+\end{tabular}
+\end{table}
+
+Todos los \textit{endpoints} en violación pertenecen al mismo grupo: las señales que la \ac{FPGA} escribe hacia el FT232H (\texttt{WR\#}, \texttt{RD\#}, \texttt{OE\#} y el bus \texttt{ADBUS[7:0]}), gobernadas por el reloj \texttt{ftdi\_clk}. El desglose del peor camino (Tabla~\ref{tab:worst_path}) permite identificar la causa raíz.
+
+\begin{table}[H]
+\centering
+\caption{Desglose del peor camino (\texttt{s\_wr\_n\_reg} $\rightarrow$ \texttt{WR\#}).}
+\label{tab:worst_path}
+\begin{tabular}{lrl}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Contribución}} & {\color{white}\textbf{Valor (ns)}} & {\color{white}\textbf{Origen}} \\
+\rowcolor[HTML]{C0E6F5}
+Requisito (medio periodo) & $8{,}333$ & TX en flanco de bajada \\
+Inserción de reloj (\texttt{CLKOUT}) & $-5{,}422$ & pin P17 no \textit{clock-capable} \\
+\rowcolor[HTML]{C0E6F5}
+Retardo del camino de datos & $-4{,}992$ & FF + \texttt{OBUF} \\
+\textit{Output delay} (setup FT232H) & $-7{,}650$ & $t_{su}=7{,}5$~ns + \textit{skew} PCB \\
+\rowcolor[HTML]{C0E6F5}
+\textbf{Slack resultante} & $\mathbf{-9{,}766}$ & \\
+\end{tabular}
+\end{table}
+
+La causa no reside en la lógica del diseño —el camino de datos tiene un único nivel lógico (\texttt{OBUF}) y tarda menos de $5$~ns—, sino en la \textbf{inserción del reloj \texttt{CLKOUT}}. Este reloj de $60$~MHz, generado por el FT232H, entra por el conector \textit{Pmod} en el pin \texttt{P17}, que \textbf{no es un pin \textit{clock-capable}}. En la placa Basys~3, ningún pin de los conectores \textit{Pmod} dispone de acceso a la red de reloj dedicada; el único pin \textit{clock-capable} disponible para el usuario es el del oscilador de la placa. Por esta razón, Vivado se ve obligado a rutar \texttt{CLKOUT} hasta el \texttt{BUFG} a través del \textit{fabric} de rutado general, introduciendo un retardo de inserción de $5{,}422$~ns. Sumado al requisito de \textit{setup} del FT232H ($7{,}5$~ns), este retardo consume por completo el medio periodo disponible entre el flanco de lanzamiento y el de captura, lo que da lugar al \textit{slack} negativo.
+
+Esta limitación es de naturaleza física y no puede resolverse mediante restricciones ni reorganización del \ac{RTL}: la única solución que la eliminaría por completo sería reubicar \texttt{CLKOUT} en un pin \textit{clock-capable}, opción inviable al estar la conexión del módulo FT232H fijada por el diseño de la placa adaptadora, o bien migrar el FT232H al modo \textit{Asynchronous FIFO}, que prescinde del reloj externo a costa de un menor ancho de banda.
+
+No obstante, el sistema opera de forma correcta y estable sobre Hardware. La violación indicada por el análisis estático corresponde al peor caso. En las condiciones reales de operación, con cables de conexión cortos y de igual longitud entre \texttt{CLKOUT} y el bus de datos, los tiempos se mantienen dentro de los márgenes que el FT232H requiere, como confirma la recepción íntegra del vídeo en el PC durante la validación (Capítulo~\ref{chap:resultados}). Se trata, por tanto, de un caso en el que el cumplimiento estricto del análisis estático de tiempos está limitado por la plataforma, pero la funcionalidad queda garantizada por medio de las pruebas realizadas.
+
+
+\subsection{Utilización de recursos}
+\label{sec:recursos}
+
+La Tabla~\ref{tab:recursos} recoge la ocupación del diseño sobre la \ac{FPGA} Artix-7 XC7A35T tras la implementación. Se distingue entre la ocupación total del \textit{bitstream} de depuración y la del sistema propiamente dicho, ya que el núcleo de depuración (\texttt{dbg\_hub}, asociado al \ac{ILA}) se retira en la configuración final y no debe contabilizarse como coste del diseño.
+
+\begin{table}[H]
+\centering
+\caption{Utilización de recursos en la XC7A35T.}
+\label{tab:recursos}
+\begin{tabular}{lrrrr}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Recurso}} & {\color{white}\textbf{Total}} & {\color{white}\textbf{Sin ILA}} & {\color{white}\textbf{Disp.}} & {\color{white}\textbf{\% (sin ILA)}} \\
+\rowcolor[HTML]{C0E6F5}
+LUT (\textit{Slice LUTs}) & $2003$ & $1555$ & $20\,800$ & $7{,}5\%$ \\
+FF (\textit{Slice Registers}) & $3102$ & $2361$ & $41\,600$ & $5{,}7\%$ \\
+\rowcolor[HTML]{C0E6F5}
+BRAM (\textit{Block RAM Tile}) & $7{,}5$ & $7{,}5$ & $50$ & $15{,}0\%$ \\
+DSP & $0$ & $0$ & $90$ & $0{,}0\%$ \\
+\rowcolor[HTML]{C0E6F5}
+MMCM & $1$ & $1$ & $5$ & $20{,}0\%$ \\
+BUFG & $6$ & $6$ & $32$ & $18{,}8\%$ \\
+\rowcolor[HTML]{C0E6F5}
+IOB (\textit{Bonded IOB}) & $74$ & $74$ & $106$ & $69{,}8\%$ \\
+\end{tabular}
+\end{table}
+
+La ocupación lógica del diseño es reducida —en torno al $7{,}5\%$ de las \ac{LUT}s y al $5{,}7\%$ de los biestables—, lo que indica que la \ac{FPGA} seleccionada ofrece un margen amplio para futuras ampliaciones, como el procesado de imagen en el propio hardware. El recurso más comprometido es el de pines de entrada/salida (\ac{IOB}), con casi un $70\%$ de ocupación, debido al elevado número de señales que exponen la interfaz del sensor y el bus del FT232H hacia los conectores \textit{Pmod}.
+
+\section{Constraints XDC}
+
+El fichero de constraints \texttt{Basys3\_GPIO.xdc} define las siguientes restricciones de timing:
+
+\begin{itemize}
+    \item \textbf{Relojes}: \texttt{create\_clock} para \texttt{basys3\_clk\_i} (100~MHz), \texttt{ftdi\_clk} (60~MHz) y \texttt{mt\_pixclk\_i} (25~MHz).
+    \item \textbf{Aislamiento de dominios asíncronos}: \texttt{set\_clock\_groups -asynchronous} entre los grupos \{\texttt{clk\_out1\_clk\_wiz\_0}, \texttt{clk\_out3\_clk\_wiz\_0}\} y \{\texttt{ftdi\_clk}\}, y entre \{\texttt{clk\_out1}\} y \{\texttt{mt\_pixclk\_i}\}.
+    \item \textbf{False paths CDC}: \texttt{set\_false\_path} desde \texttt{ftdi\_clk} hacia los registros de sincronización \texttt{s\_cmd\_valid\_r\_reg}, \texttt{cmd\_type\_o\_reg} y \texttt{cmd\_data\_o\_reg}.
+    \item \textbf{Routing}: \texttt{CLOCK\_DEDICATED\_ROUTE FALSE} en el neto \texttt{mt\_pixclk\_i\_IBUF}, dado que el pin físico utilizado no es un pin de reloj dedicado (CCIO) de la Artix-7.
+\end{itemize}
+
+\section{Depuración en hardware con ILA}
+Durante el desarrollo se emplearon numerosos \textit{cores} ILA (\textit{Integrated Logic Analyzer}) para depurar sobre hardware las distintas etapas del diseño —la configuración del sensor por I2C, la captura de trama, el protocolo del FT232H o los cruces de dominio de reloj—, que se fueron retirando a medida que cada bloque quedaba validado. En la versión final del diseño se conservan únicamente dos, asociados a la depuración del procesador de comandos:
+
+\begin{itemize}
+    \item \textbf{\texttt{ila\_0}} (dominio \texttt{s\_mclk}, 100~MHz): monitoriza el interior de \texttt{cmd\_processor}, incluyendo los registros de salida (\texttt{s\_led\_toggle\_r}, \texttt{s\_cap\_en\_r}, \texttt{s\_sim\_en\_r}), la cadena CDC (\texttt{s\_valid\_sync1}, \texttt{s\_valid\_sync2}, \texttt{s\_cmd\_pulse}) y el tipo de comando sincronizado (\texttt{s\_type\_sync1}).
+    \item \textbf{\texttt{ila\_3}} (dominio \texttt{s\_mclk}, 100~MHz): monitoriza las entradas de \texttt{cmd\_processor} y el estado de la FSM de ejecución I2C (\texttt{s\_exec\_state}).
+\end{itemize}
+
+Estos \textit{cores} de depuración no forman parte de la funcionalidad del sistema y se eliminan en la configuración final, por lo que no deben contabilizarse como coste del diseño.
+
+\subsection{Diagnóstico del protocolo FT232H}
+
+El ILA \texttt{ila\_0} fue determinante para identificar el bug de decodificación de comandos. Con trigger en \texttt{s\_cmd\_pulse='1'}, se observó que \texttt{s\_type\_sync1} mostraba continuamente el valor \texttt{0xCC} (marcador de sincronismo) en vez del tipo de comando real. Este patrón reveló que el módulo \texttt{ftdi\_controller} estaba leyendo el mismo byte dos veces consecutivas en vez de avanzar al siguiente.
+
+El análisis del timing del FT232H (Figura~4.4 del datasheet) mostró que el chip presenta los datos estables en el flanco de subida de \texttt{CLKOUT}, mientras que el diseño original muestreaba en \texttt{falling\_edge}. La solución definitiva consistió en:
+
+\begin{enumerate}
+    \item Separar TX (falling\_edge) y RX (rising\_edge) en dos procesos independientes.
+    \item Implementar el protocolo de ráfaga continua (\texttt{RD\#} mantenido bajo durante todos los bytes) en vez de toggle por byte.
+    \item Introducir un ciclo de pipeline vacío (\texttt{ST\_RD0}) para absorber el tiempo de presentación del primer byte.
+\end{enumerate}
+
+\section{Pruebas en hardware}
+
+\subsection{Transmisión de imagen}
+
+Con la FPGA programada y el sensor conectado, \texttt{vicon\_view} recibe y muestra correctamente el flujo de imagen en escala de grises a resolución VGA (640$\times$480) a la tasa objetivo de 30~fps (configurada en \texttt{config\_pkg.vhd} mediante \texttt{c\_MT9V111\_TARGET\_FPS} y con la frecuencia fija del reloj generado de 30MHz), tal y como se describe en la Sección~\ref{sec:top}.
+
+\subsection{Comandos de control}
+
+Tras la corrección del protocolo FT232H, los comandos de control funcionan con un único envío:
+
+\begin{itemize}
+    \item \texttt{CMD 0x01} (LED): el LED seleccionado se conmuta instantáneamente y el streaming de imagen continúa sin interrupción.
+    \item \texttt{CMD 0x03} (I2C): la escritura de registros del sensor se ejecuta correctamente, verificable tanto por el ILA como por el efecto visual en la imagen.
+    \item \texttt{CMD 0x04} (CAP): la desactivación de la captura detiene el streaming; la reactivación lo reanuda.
+    \item \texttt{CMD 0x05} (SIM): la conmutación entre imagen real e imagen sintética funciona correctamente.
+\end{itemize}
+
+\end{document}

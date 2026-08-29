@@ -1,0 +1,246 @@
+% !TEX root = ../main.tex
+\documentclass[../main.tex]{subfiles}
+\begin{document}
+
+\chapter{Descripción y arquitectura del sistema}
+\label{chap:descripcion_sistema}
+
+En este capítulo se describe la arquitectura del sistema \ac{VICON}, presentando en primer lugar una visión global de sus bloques principales, para después detallar la arquitectura física, el hardware empleado y, por último, la arquitectura lógica interna de la \ac{FPGA}.
+
+\section{Arquitectura global}
+
+VICON es un sistema de adquisición y transmisión de imagen en tiempo real cuya arquitectura se divide en tres bloques principales: la placa de desarrollo Basys~3, equipada con una \ac{FPGA} Xilinx Artix-7 sobre la que se implementa toda la lógica de procesamiento, el sensor de imagen MT9V111 y el PC de visualización. La Figura~\ref{fig:arq_global} muestra el diagrama de bloques del sistema completo en alto nivel. El flujo de datos de imagen sigue el camino en sentido de derecha a izquierda: sensor MT9V111 $\rightarrow$ FPGA $\rightarrow$ PC. El flujo de comandos sigue el camino inverso: PC $\rightarrow$ FPGA $\rightarrow$ sensor MT9V111.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{gfx/cap_arquitectura/arquitectura.pdf}
+    \caption{Arquitectura global del sistema VICON.}
+    \label{fig:arq_global}
+\end{figure}
+
+Al descomponer la arquitectura global en sus componentes de nivel inmediatamente inferior, se distinguen los siguientes bloques (representados en la Figura~\ref{fig:arq_global_2}):
+\begin{itemize}
+    \item Sensor MT9V111: expone, tal y como se indica en su hoja de datos~\cite{mt9v111_datasheet}, por un lado, los \textbf{datos} de la imagen capturada y, por otro, los \textbf{registros de control}, organizados en dos páginas y accesibles mediante \ac{I2C}.
+    \item FPGA Basys~3: en la imagen se muestran los módulos que hacen de interfaz con el exterior: la adquisición de imágenes, el control del sensor por \ac{I2C} y la comunicación con el PC a través del chip FT232H. Uno de los retos principales del diseño implica diseñar tanto estos módulos como la comunicación entre ellos, gestionando de manera correcta los cruces de reloj presentes. Además, la FPGA implementa una \ac{FSM} que gestiona procesos tales como la configuración inicial del sensor o la gestión de comandos recibidos por el PC. 
+    \item PC: encargado de realizar el procesamiento de imágenes y de mostrar la interfaz gráfica de usuario. Esta presenta las imágenes, la información asociada (p.~ej., los \ac{FPS}) y los controles disponibles del sistema.
+    \item Chip FT232H: gestiona la comunicación entre la FPGA y el PC, proporcionando un enlace de alta velocidad. Convierte el bus paralelo de 8~bits que expone la FPGA en modo \textit{Synchronous FIFO} en un flujo serie sobre USB~2.0 \textit{High-Speed}.
+\end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{gfx/cap_arquitectura/arquitectura2.pdf}
+    \caption{Descomposición parcial de la arquitectura global.}
+    \label{fig:arq_global_2}
+\end{figure}
+
+\FloatBarrier
+
+\section{Arquitectura física}
+\label{sec:arq_fisica}
+La arquitectura física describe los elementos Hardware del sistema y las interfaces que los conectan. La Figura~\ref{fig:arq_fisica} recoge el diagrama de bloques físico de \ac{VICON}. El sistema se articula en torno a la placa Basys~3, que aloja la FPGA Artix-7 donde reside toda la lógica; el sensor MT9V111, montado sobre una \ac{PCB} adaptadora que reordena sus pines hacia los conectores Pmod; y el módulo FT232H, que enlaza la FPGA con el PC anfitrión a través de USB~2.0. El sensor se conecta a los Pmod JA y JXADC, mientras que el FT232H ocupa otros dos Pmod. El detalle de cada componente se recoge en la sección~\ref{sec:hardware}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{gfx/cap_arquitectura/arquitectura_fisica.pdf}
+    \caption{Arquitectura física del sistema VICON (diagrama de bloques).}
+    \label{fig:arq_fisica}
+\end{figure}
+
+\section{Hardware}
+\label{sec:hardware}
+
+\subsection{FPGA Basys 3}
+
+La Basys~3 es una plataforma de desarrollo de Digilent basada en el dispositivo Xilinx XC7A35T-1CPG236C de la familia Artix-7~\cite{basys3_manual}. Dispone de: 
+\begin{itemize}
+    \item 33.280 celdas lógicas
+    \item 1.800~Kb de BRAM
+    \item oscilador de 100~MHz en placa
+    \item 16 \textit{switches}
+    \item 5 pulsadores
+    \item 16 LEDs
+    \item 4 displays de 7~segmentos
+    \item 4 conectores PMOD. Para este proyecto se utilizan los conectores PMOD para conectar el sensor MT9V111 y el chip FT232H.
+\end{itemize}
+
+\subsection{Sensor CMOS MT9V111}
+
+El sensor MT9V111 de ON~Semiconductor es un sensor de imagen CMOS de resolución VGA (640$\times$480 píxeles). Sus características principales son:
+
+\begin{itemize}
+    \item Salida de datos en varios formatos. El que se ha utilizado en este proyecto ha sido el formato YCbCr~4:2:2 con 8~bits por ciclo de píxel. El formato de salida es configurable a través de los registros internos del sensor, accesibles mediante la interfaz \ac{I2C}; en el presente proyecto se confirmó en la fase inicial que el protocolo configurado era el correcto.
+    \item Reloj de píxel (\texttt{PIXCLK}) generado por el propio sensor a partir del reloj maestro (\texttt{MCLK}) suministrado por la FPGA.
+    \item Señales de sincronismo de trama (\texttt{FVALID}) y de línea (\texttt{LVALID}).
+    \item Interfaz de configuración \ac{I2C} con la dirección configurada a \texttt{0x5C} (7~bits).
+    \item Registros organizados en dos páginas: página~0 (sensor core) y página~1 (\ac{IFP}).
+\end{itemize}
+
+Durante la fase inicial de diseño, antes de escribir la lógica \ac{RTL} de \texttt{frame\_capture} (Sección~\ref{sec:frame_capture}), se capturaron las señales reales del sensor con un analizador lógico externo (utilizando como visualizador el Software Logic 2) para confirmar empíricamente el comportamiento descrito en el \textit{datasheet}~\cite{mt9v111_datasheet}. La Figura~\ref{fig:la_mt9v111_timing} muestra dicha captura, con la nomenclatura del sensor (\texttt{VSYNC}/\texttt{HREF}, equivalentes a \texttt{FVALID}/\texttt{LVALID} en el resto de la memoria): el reloj de píxel \texttt{PIXCLK} conmutando de forma continua, el pulso de \texttt{VSYNC} delimitando el inicio de fotograma, la señal \texttt{HREF} delimitando cada línea activa, y el bus de datos \texttt{D[7:0]} conmutando únicamente durante las ventanas en las que \texttt{HREF} está a nivel alto. Esta caracterización previa permitió validar la interpretación del protocolo frente al datasheet antes de desarrolar un diseño RTL concreto, y sirvió de base para la máquina de estados de \texttt{frame\_capture}. 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{gfx/cap_descripcion_sistema/mt9v111_data_times_5.png}
+    \caption{Captura con analizador lógico de las señales del MT9V111 (\texttt{RESETN}, \texttt{PIXLCLK}, \texttt{VSYNC}, \texttt{HREF}, \texttt{D[7:0]}) durante la fase inicial de caracterización.}
+    \label{fig:la_mt9v111_timing}
+\end{figure}
+
+
+En la configuración actual, el sensor opera a 30~\ac{FPS} con resolución \ac{VGA} entregando imágenes en escala de grises (componente Y del espacio YCbCr), dado que los valores de Cb y Cr se descartan con el fin de aumentar la tasa de frames por segundo.
+
+La Tabla~\ref{tab:pines_mt9v111} recoge la asignación de pines de la \ac{FPGA} para el sensor MT9V111, reflejada en del fichero de restricciones \texttt{Basys3\_GPIO.xdc}.
+
+\begin{table}[H]
+\centering
+\caption{Asignación de pines de la FPGA para el sensor MT9V111.}
+\label{tab:pines_mt9v111}
+\begin{tabular}{>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{2.2cm}>{\raggedright\arraybackslash}p{7cm}}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Señal (VHDL)}} & {\color{white}\textbf{Pin FPGA}} & {\color{white}\textbf{Función}} \\
+\rowcolor[HTML]{C0E6F5}
+\texttt{mt\_clk\_o} & L2 & \texttt{MCLK}: reloj maestro hacia el sensor (27~MHz, generado por el \ac{MMCM}; valor máximo admitido por el sensor según su hoja de características). \\
+\texttt{mt\_pixclk\_i} & H1 & \texttt{PIXCLK}: reloj de píxel generado por el propio sensor a partir de \texttt{MCLK} (27~MHz; \texttt{create\_clock -period 37.037}). En la configuración por defecto del sensor, $f_{PIXCLK} = f_{MCLK}$; si se requiriera una relación distinta sería necesario configurar los registros del \ac{PLL} interno del sensor a través de \ac{I2C}. Pin no \textit{clock-capable} (\texttt{CLOCK\_DEDICATED\_ROUTE FALSE}). \\
+\rowcolor[HTML]{C0E6F5}
+\texttt{mt\_reset\_n\_o} & J3 & \texttt{RESET\#}: reset del sensor, activo a nivel bajo. \\
+\texttt{mt\_fvalid\_i} & H2 & \texttt{FVALID} (\textit{frame valid}): validez de fotograma. \\
+\rowcolor[HTML]{C0E6F5}
+\texttt{mt\_lvalid\_i} & J2 & \texttt{LVALID} (\textit{line valid}): validez de línea. \\
+\texttt{mt\_data\_i[7:0]} & \multicolumn{2}{>{\raggedright\arraybackslash}p{9.2cm}}{\texttt{DOUT[7:0]}: bus de datos de imagen (YCbCr~4:2:2 / componente Y). Pines, de bit~0 a bit~7: L3, M3, M2, M1, N2, N1, J1, K2.} \\
+\rowcolor[HTML]{C0E6F5}
+\texttt{i2c\_sclk\_io} & G3 & \ac{SCL}: reloj \ac{I2C} (\textit{pull-up} interno de la FPGA activado). \\
+\texttt{i2c\_sdata\_io} & G2 & \ac{SDA}: datos \ac{I2C} (\textit{pull-up} interno de la FPGA activado). \\
+\end{tabular}
+\end{table}
+
+
+La conexión del sensor a la BASYS se realiza tal y como se muestra en la siguiente imagen.
+\begin{figure}[htbp] 
+    \centering
+    \includegraphics[width=\textwidth]{gfx/camera_connection.pdf}
+    \caption{Conexión del sensor CMOS a la Basys 3.} 
+    \label{fig:camera_connection} 
+\end{figure}
+
+\subsection{Chip FT232H}
+
+El FT232H de FTDI es un convertidor USB~2.0 a interfaz serie/paralela de alta velocidad. En este proyecto se configura en modo \textit{Synchronous FIFO}, seleccionado mediante la herramienta \texttt{FT Prog} de FTDI, que permite programar la configuración de la interfaz en la \ac{EEPROM} externa del propio chip. Este modo proporciona:
+
+\begin{itemize}
+    \item Un bus de datos bidireccional de 8~bits (\texttt{ADBUS[7:0]}).
+    \item Un bus de control (\texttt{ACBUS}) que incluye las señales \texttt{RXF\#}, \texttt{TXE\#}, \texttt{RD\#}, \texttt{WR\#}, \texttt{OE\#} y \texttt{CLKOUT}.
+    \item Un reloj \textbf{síncrono} de 60~MHz generado internamente (\texttt{CLKOUT}).
+    \item Tasa de transferencia teórica de hasta 40~MB/s en modo de FIFO síncrona \cite{ft232h_datasheet}.
+\end{itemize}
+
+El módulo UM232H-B se conecta a la Basys~3 mediante dos conectores \textit{Pmod}: uno para \texttt{ADBUS[7:0]} y otro para \texttt{ACBUS[7:0]}. La Tabla~\ref{tab:pines_ft232h_adbus} recoge el bus de datos y la Tabla~\ref{tab:pines_ft232h_acbus} el bus de control, incluyendo el color del cable de cada línea del \textit{cable Pmod} tal y como se cableó físicamente (información reflejada en los comentarios del fichero \texttt{Basys3\_GPIO.xdc}).
+
+\begin{table}[H]
+\centering
+\caption{Asignación de pines de la FPGA para el bus de datos del FT232H (\texttt{ADBUS}).}
+\label{tab:pines_ft232h_adbus}
+\begin{tabular}{>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{2cm}>{\raggedright\arraybackslash}p{2.4cm}>{\raggedright\arraybackslash}p{4.5cm}}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Señal (VHDL)}} & {\color{white}\textbf{Pin FPGA}} & {\color{white}\textbf{Cable Pmod}} & {\color{white}\textbf{Línea FT232H}} \\
+\rowcolor[HTML]{C0E6F5}
+\texttt{ftdi\_adbus\_io[0]} & A14 & Marrón (pin~1) & D0 \\
+\texttt{ftdi\_adbus\_io[1]} & A15 & Rojo (pin~7) & D1 \\
+\rowcolor[HTML]{C0E6F5}
+\texttt{ftdi\_adbus\_io[2]} & A16 & Naranja (pin~2) & D2 \\
+\texttt{ftdi\_adbus\_io[3]} & A17 & Amarillo (pin~8) & D3 \\
+\rowcolor[HTML]{C0E6F5}
+\texttt{ftdi\_adbus\_io[4]} & B15 & Verde (pin~3) & D4 \\
+\texttt{ftdi\_adbus\_io[5]} & C15 & Azul (pin~9) & D5 \\
+\rowcolor[HTML]{C0E6F5}
+\texttt{ftdi\_adbus\_io[6]} & B16 & Morado (pin~4) & D6 \\
+\texttt{ftdi\_adbus\_io[7]} & C16 & Gris (pin~10) & D7 \\
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Asignación de pines de la FPGA para el bus de control del FT232H (\texttt{ACBUS}).}
+\label{tab:pines_ft232h_acbus}
+\begin{tabular}{>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{2cm}>{\raggedright\arraybackslash}p{2.4cm}>{\raggedright\arraybackslash}p{4.5cm}}
+\rowcolor[HTML]{156082}
+{\color{white}\textbf{Señal (VHDL)}} & {\color{white}\textbf{Pin FPGA}} & {\color{white}\textbf{Cable Pmod}} & {\color{white}\textbf{Línea FT232H}} \\
+\rowcolor[HTML]{C0E6F5}
+\texttt{ftdi\_acbus\_io[0]} & K17 & Rojo (pin~1) & \texttt{RXF\#} (entrada): FIFO de TX no vacía. \\
+\texttt{ftdi\_acbus\_io[1]} & L17 & Naranja (pin~7) & \texttt{TXE\#} (entrada): FIFO de RX no llena. \\
+\rowcolor[HTML]{C0E6F5}
+\texttt{ftdi\_acbus\_io[2]} & M18 & Amarillo (pin~2) & \texttt{RD\#} (salida): activa lectura de un byte. \\
+\texttt{ftdi\_acbus\_io[3]} & M19 & Verde (pin~8) & \texttt{WR\#} (salida): activa escritura de un byte. \\
+\rowcolor[HTML]{C0E6F5}
+\texttt{ftdi\_acbus\_io[4]} & N17 & Azul (pin~3) & \texttt{SIWU\#} (salida, fija a \texttt{'1'}). \\
+\texttt{ftdi\_acbus\_io[5]} & P17 & Morado (pin~9) & \texttt{CLKOUT} (entrada): reloj síncrono de 60~MHz. Pin no \textit{clock-capable} (origen de la violación de \textit{timing} de la Sección~\ref{sec:resultados_timing}). \\
+\rowcolor[HTML]{C0E6F5}
+\texttt{ftdi\_acbus\_io[6]} & P18 & Gris (pin~4) & \texttt{OE\#} (salida): habilita al FT232H a conducir \texttt{ADBUS}. \\
+\texttt{ftdi\_acbus\_io[7]} & R18 & Blanco (pin~10) & \texttt{PWRSAV} (salida, fija a \texttt{'1'}). \\
+\end{tabular}
+\end{table}
+
+\FloatBarrier
+
+\section{Arquitectura lógica}
+\label{sec:arq_logica}
+ 
+La arquitectura lógica define los componentes descritos por lenguaje, \ac{SW} o \ac{HW}, del sistema y las relaciones que existen entre ellos con independencia de su realización física. En \ac{VICON} estos componentes se reparten entre dos entornos muy distintos: la lógica descrita en \ac{VHDL} que se sintetiza sobre la FPGA y la aplicación \ac{SW} que se ejecuta en el PC (Host). La Figura~\ref{fig:arq_logica} presenta una visión general de ambos componentes y de las interfaces que los comunican, mientras que la Figura~\ref{fig:arq_logica_det} detalla la estructura interna de la lógica de la FPGA a nivel de módulo y señal.
+ 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{gfx/cap_arquitectura/arquitectura_logica.pdf}
+    \caption{Arquitectura lógica del sistema VICON: visión general.}
+    \label{fig:arq_logica}
+\end{figure}
+ 
+\FloatBarrier
+ 
+\subsection{Componentes de la FPGA}
+ 
+Todos los componentes de la lógica programable se integran bajo el módulo \texttt{TOP}, que actúa como contenedor: instancia cada submódulo, resuelve sus interconexiones y expone hacia el exterior los puertos de la placa. Ninguno de los submódulos tiene existencia propia fuera del \texttt{TOP}, dado que su ciclo de vida queda ligado al del diseño sintetizado.
+ 
+Los componentes identificados son los siguientes:
+ 
+\begin{itemize}
+    \item \texttt{i2c\_controller}: implementa el maestro \ac{I2C} que configura los registros del sensor MT9V111 y permite su lectura posterior. Expone hacia el exterior las señales \texttt{\ac{SCL}} y \texttt{\ac{SDA}}.
+    \item \texttt{frame\_capture}: recibe el flujo de píxeles del sensor, extrae la componente de luminancia, inserta los marcadores de inicio de trama y regula la tasa de fotogramas entregada.
+    \item \texttt{ftdi\_controller}: gestiona el diálogo con el chip FT232H en modo \textit{Synchronous FIFO}, tanto en el envío de imagen como en la recepción de comandos.
+    \item \texttt{cmd\_processor}: decodifica los comandos recibidos y ejecuta la acción asociada a cada uno.
+    \item \texttt{mt9v111\_image}: genera un patrón de imagen sintético que emula el protocolo de salida del sensor, permitiendo validar la cadena de transmisión independientemente del Hardware.
+    \item \ac{FSM} principal: coordina la secuencia de configuración del sensor y habilita la captura una vez completada. Además, es la encargada de discernir si le ha llegado un comando y realizar la acción correspondiente. Actualmente \textbf{se prioriza la recepción de un comando frente al envío de trama}, ya que se entiende que es una situación más puntual e importante que la transmisión de imagen.
+    
+\end{itemize}
+ 
+A estos componentes propios se suman dos \ac{IP}s del catálogo del fabricante: el \ac{MMCM} (\texttt{clk\_wiz\_0}), que genera el reloj del sistema, y la \ac{FIFO} asíncrona (\texttt{fifo\_generator\_0}), que desacopla la captura de la transmisión.
+ 
+\subsection{Relaciones entre componentes y dominios de reloj}
+ 
+La Figura~\ref{fig:arq_logica_det} muestra la interconexión de estos módulos, utilizando nombres representativos que pueden no coincidir con el nombre exacto de la instancia. Los componentes no comparten un único reloj, sino que se reparten entre tres dominios independientes (cuatro si se contabiliza la comunicación I2C).
+ 
+El módulo \texttt{frame\_capture} opera en el dominio del reloj de píxel que impone el sensor, mientras que \texttt{ftdi\_controller} lo hace en el dominio del reloj que suministra el propio FT232H. La relación entre ambos no puede ser directa: se comunican a través de la \ac{FIFO} asíncrona, cuyo puerto de escritura pertenece al primer dominio y cuyo puerto de lectura pertenece al segundo. La FIFO actúa así como \textbf{elemento de desacoplo} entre la producción y el consumo de datos de imagen.
+ 
+El resto de relaciones entre dominios corresponde a señales de control y se resuelve mediante sincronizadores de doble flip-flop, representados en la figura entre los módulos implicados: las señales de habilitación de captura y de selección de fuente de imagen cruzan desde el dominio de control hacia el dominio de píxel, mientras que los comandos decodificados cruzan en sentido inverso, desde el dominio del FT232H hacia el de control. El detalle de estos cruces, así como las restricciones de temporizado asociadas, se detalla en la Sección~\ref{sec:cdc}.
+ 
+La selección entre imagen real e imagen sintética se resuelve mediante un multiplexor controlado por la señal de selección sincronizada, de modo que \texttt{mt9v111\_image} y el sensor físico son fuentes intercambiables para \texttt{frame\_capture} por medio de un comando de usuario.
+ 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{gfx/cap_arquitectura/arquitectura_logica2.pdf}
+    \caption{Arquitectura lógica de la FPGA: módulos, señales y dominios de reloj.}
+    \label{fig:arq_logica_det}
+\end{figure}
+ 
+\FloatBarrier
+ 
+\subsection{Componentes del Host}
+ 
+En el lado del PC, la aplicación \texttt{vicon\_view} agrupa los componentes software encargados de recibir, procesar y presentar el vídeo, así como de enviar los comandos de control. Como se aprecia en la Figura~\ref{fig:arq_logica}, se identifican cuatro componentes:
+ 
+\begin{itemize}
+    \item \textbf{RX Frames}: recibe el flujo de bytes procedente del enlace USB, localiza los marcadores de inicio de trama y reconstruye cada fotograma completo.
+    \item \textbf{Procesado}: interpreta los fotogramas recibidos como imágenes en escala de grises y aplica sobre ellos el procesado de visión.
+    \item \textbf{CMDs}: construye los comandos de control y los envía hacia la FPGA a través del mismo enlace.
+    \item \textbf{GUI (Qt)}: presenta el vídeo, la información asociada y los controles con los que el usuario interactúa con el sistema.
+\end{itemize}
+ 
+La relación entre estos componentes describe un lazo cerrado: el flujo de imagen asciende desde la recepción hasta la interfaz gráfica, mientras que las acciones del usuario sobre la interfaz descienden en forma de comandos hacia la FPGA. Ambos sentidos comparten un único enlace físico (USB), lo que condiciona el diseño de la aplicación y se detalla en el Capítulo~\ref{chap:software}.
+
+\end{document}
